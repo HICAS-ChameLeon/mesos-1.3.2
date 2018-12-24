@@ -1695,7 +1695,7 @@ private:
   uint64_t failedAuthentications;
 };
 
-} // namespace internal {
+} // namespace internal {实现的接口 SchedulerDriver
 } // namespace mesos {
 
 
