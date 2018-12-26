@@ -2920,6 +2920,7 @@ void Master::_subscribe(
     FrameworkRegisteredMessage message;
     message.mutable_framework_id()->MergeFrom(framework->id());
     message.mutable_master_info()->MergeFrom(info_);
+    LOG(INFO)<< "lele framework "<<framework->id()<<" has registered on master";
     framework->send(message);
 
     return;

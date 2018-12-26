@@ -1,5 +1,4 @@
 # First, ignore yourself.
-/3rdparty
 /cmake-build-debug
 /build
 .idea

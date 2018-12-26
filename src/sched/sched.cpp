@@ -356,7 +356,9 @@ protected:
         // first registration attempt too. This needs fixing tests
         // that expect scheduler to register even with clock paused
         // (e.g., rate limiting tests).
+        LOG(INFO)<<"lele 359 started doReliableRegistration";
         doReliableRegistration(flags.registration_backoff_factor);
+        LOG(INFO)<<"lele 360 finished doReliableRegistration";
       }
 #else
       // Authentication not enabled on this platform. Proceed with registration
@@ -770,7 +772,7 @@ protected:
 
     scheduler->registered(driver, frameworkId, masterInfo);
 
-    VLOG(1) << "Scheduler::registered took " << stopwatch.elapsed();
+    LOG(INFO) << "Scheduler::registered took " << stopwatch.elapsed();
   }
 
   void reregistered(
@@ -833,7 +835,7 @@ protected:
     authenticated = false;
 #endif // HAS_AUTHENTICATION
 
-    VLOG(1) << "Sending SUBSCRIBE call to " << master.get().pid();
+    LOG(INFO) << "Sending SUBSCRIBE call to " << master.get().pid();
 
     Call call;
     call.set_type(Call::SUBSCRIBE);
@@ -866,7 +868,7 @@ protected:
     // TODO(vinod): Use random numbers from <random> header.
     Duration delay = maxBackoff * ((double) os::random() / RAND_MAX);
 
-    VLOG(1) << "Will retry registration in " << delay << " if necessary";
+    LOG(INFO) << "Will retry registration in " << delay << " if necessary";
 
     // Backoff.
     frameworkRegistrationTimer = process::delay(
@@ -878,14 +880,15 @@ protected:
       const vector<Offer>& offers,
       const vector<string>& pids)
   {
+      LOG(INFO)<<"lele resourceOffers";
     if (!running.load()) {
-      VLOG(1) << "Ignoring resource offers message because "
+        LOG(INFO) << "Ignoring resource offers message because "
               << "the driver is not running!";
       return;
     }
 
     if (!connected) {
-      VLOG(1) << "Ignoring resource offers message because the driver is "
+        LOG(INFO) << "Ignoring resource offers message because the driver is "
               << "disconnected!";
       return;
     }
@@ -893,7 +896,7 @@ protected:
     CHECK_SOME(master);
 
     if (from != master.get().pid()) {
-      VLOG(1) << "Ignoring resource offers message because it was sent "
+        LOG(INFO) << "Ignoring resource offers message because it was sent "
               << "from '" << from << "' instead of the leading master '"
               << master.get().pid() << "'";
       return;
@@ -906,7 +909,7 @@ protected:
       return;
     }
 
-    VLOG(2) << "Received " << offers.size() << " offers";
+      LOG(INFO) << "Received " << offers.size() << " offers";
 
     CHECK_EQ(offers.size(), pids.size());
 
@@ -927,22 +930,22 @@ protected:
     if (FLAGS_v >= 1) {
       stopwatch.start();
     }
-
+    LOG(INFO)<<" scheduler->resourceOffers(driver, offers)";
     scheduler->resourceOffers(driver, offers);
 
-    VLOG(1) << "Scheduler::resourceOffers took " << stopwatch.elapsed();
+      LOG(INFO) << "Scheduler::resourceOffers took " << stopwatch.elapsed();
   }
 
   void rescindOffer(const UPID& from, const OfferID& offerId)
   {
     if (!running.load()) {
-      VLOG(1) << "Ignoring rescind offer message because "
+        LOG(INFO)<< "Ignoring rescind offer message because "
               << "the driver is not running!";
       return;
     }
 
     if (!connected) {
-      VLOG(1) << "Ignoring rescind offer message because the driver is "
+        LOG(INFO) << "Ignoring rescind offer message because the driver is "
               << "disconnected!";
       return;
     }
@@ -956,7 +959,7 @@ protected:
       return;
     }
 
-    VLOG(1) << "Rescinded offer " << offerId;
+      LOG(INFO) << "Rescinded offer " << offerId;
 
     savedOffers.erase(offerId);
 
@@ -964,7 +967,7 @@ protected:
     if (FLAGS_v >= 1) {
       stopwatch.start();
     }
-
+      LOG(INFO)<<"lele scheduler->offerRescinded(driver, offerId)";
     scheduler->offerRescinded(driver, offerId);
 
     VLOG(1) << "Scheduler::offerRescinded took " << stopwatch.elapsed();
@@ -975,6 +978,8 @@ protected:
       const StatusUpdate& update,
       const UPID& pid)
   {
+
+      LOG(INFO) << "lele statusUpdate ";
     if (!running.load()) {
       VLOG(1) << "Ignoring task status update message because "
               << "the driver is not running!";
@@ -999,7 +1004,7 @@ protected:
       }
     }
 
-    VLOG(2) << "Received status update " << update << " from " << pid;
+    LOG(INFO) << "Received status update " << update << " from " << pid;
 
     CHECK(framework.id() == update.framework_id());
 
@@ -1035,10 +1040,10 @@ protected:
     if (FLAGS_v >= 1) {
       stopwatch.start();
     }
-
+    LOG(INFO)<< "lele scheduler->statusUpdate(driver, status) ";
     scheduler->statusUpdate(driver, status);
 
-    VLOG(1) << "Scheduler::statusUpdate took " << stopwatch.elapsed();
+      LOG(INFO) << "Scheduler::statusUpdate took " << stopwatch.elapsed();
 
     if (implicitAcknowledgements) {
       // Note that we need to look at the atomic 'running' here
@@ -1271,10 +1276,10 @@ protected:
   void requestResources(const vector<Request>& requests)
   {
     if (!connected) {
-      VLOG(1) << "Ignoring request resources message as master is disconnected";
+        LOG(INFO) << "Ignoring request resources message as master is disconnected";
       return;
     }
-
+    LOG(INFO)<<" lele request Resources ";
     Call call;
 
     CHECK(framework.has_id());
@@ -1294,6 +1299,7 @@ protected:
                    const vector<TaskInfo>& tasks,
                    const Filters& filters)
   {
+      LOG(INFO)<<"lele launchTasks";
     Offer::Operation operation;
     operation.set_type(Offer::Operation::LAUNCH);
 
@@ -1398,7 +1404,8 @@ protected:
     accept->mutable_filters()->CopyFrom(filters);
 
     CHECK_SOME(master);
-    send(master.get().pid(), call);
+      LOG(INFO)<<"lele acceptOffers";
+      send(master.get().pid(), call);
   }
 
   void declineOffer(
@@ -1446,6 +1453,7 @@ protected:
     call.set_type(Call::REVIVE);
 
     CHECK_SOME(master);
+    LOG(INFO)<<"lele reviveOffers";
     send(master.get().pid(), call);
   }
 
@@ -1565,6 +1573,7 @@ protected:
       message->set_data(data);
 
       CHECK_SOME(master);
+      LOG(INFO)<<"lele sendFrameworkMessage";
       send(master.get().pid(), call);
     }
   }
