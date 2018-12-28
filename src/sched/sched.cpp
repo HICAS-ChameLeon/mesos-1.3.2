@@ -930,10 +930,10 @@ protected:
     if (FLAGS_v >= 1) {
       stopwatch.start();
     }
-    LOG(INFO)<<" scheduler->resourceOffers(driver, offers)";
+    LOG(INFO)<<"lele scheduler->resourceOffers(driver, offers)";
     scheduler->resourceOffers(driver, offers);
 
-      LOG(INFO) << "Scheduler::resourceOffers took " << stopwatch.elapsed();
+      LOG(INFO) << "lele Scheduler::resourceOffers took " << stopwatch.elapsed();
   }
 
   void rescindOffer(const UPID& from, const OfferID& offerId)
@@ -1004,7 +1004,7 @@ protected:
       }
     }
 
-    LOG(INFO) << "Received status update " << update << " from " << pid;
+    LOG(INFO) << "lele Received status update " << update << " from " << pid;
 
     CHECK(framework.id() == update.framework_id());
 
@@ -1043,7 +1043,7 @@ protected:
     LOG(INFO)<< "lele scheduler->statusUpdate(driver, status) ";
     scheduler->statusUpdate(driver, status);
 
-      LOG(INFO) << "Scheduler::statusUpdate took " << stopwatch.elapsed();
+      LOG(INFO) << "lele Scheduler::statusUpdate took " << stopwatch.elapsed();
 
     if (implicitAcknowledgements) {
       // Note that we need to look at the atomic 'running' here
@@ -1404,7 +1404,7 @@ protected:
     accept->mutable_filters()->CopyFrom(filters);
 
     CHECK_SOME(master);
-      LOG(INFO)<<"lele acceptOffers";
+      LOG(INFO)<<"lele accept Offers";
       send(master.get().pid(), call);
   }
 

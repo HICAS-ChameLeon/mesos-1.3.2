@@ -6469,7 +6469,7 @@ void Master::statusUpdate(StatusUpdate update, const UPID& pid)
     return;
   }
 
-  LOG(INFO) << "Status update " << update << " from agent " << *slave;
+  LOG(INFO) << "lele Status update " << update << " from agent " << *slave;
 
   // We ensure that the uuid of task status matches the update's uuid, in case
   // the task status uuid is not set by the slave.
@@ -6537,7 +6537,7 @@ void Master::forward(
                   ? " '" + update.status().message() + "'"
                   : "");
   } else {
-    LOG(INFO) << "Forwarding status update " << update;
+    LOG(INFO) << "lele Forwarding status update " << update;
   }
 
   // The task might not exist in master's memory (e.g., failed task validation).

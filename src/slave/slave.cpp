@@ -536,12 +536,12 @@ void Slave::initialize()
         HookManager::slaveAttributesDecorator(info));
   }
 
-  LOG(INFO) << "Agent attributes: " << info.attributes();
+  LOG(INFO) << "lele Agent attributes: " << info.attributes();
 
   // Checkpointing of slaves is always enabled.
   info.set_checkpoint(true);
 
-  LOG(INFO) << "Agent hostname: " << info.hostname();
+  LOG(INFO) << "lele Agent hostname: " << info.hostname();
 
   statusUpdateManager->initialize(defer(self(), &Slave::forward, lambda::_1)
     .operator std::function<void(StatusUpdate)>());
@@ -1609,7 +1609,7 @@ void Slave::run(
 
   const FrameworkID& frameworkId = frameworkInfo.id();
 
-  LOG(INFO) << "Got assigned " << taskOrTaskGroup(task, taskGroup)
+  LOG(INFO) << "lele Got assigned " << taskOrTaskGroup(task, taskGroup)
             << " for framework " << frameworkId;
 
   foreach (const TaskInfo& _task, tasks) {
@@ -3054,7 +3054,7 @@ void Slave::shutdownFramework(
     return;
   }
 
-  VLOG(1) << "Asked to shut down framework " << frameworkId
+  LOG(INFO) << "lele Asked to shut down framework " << frameworkId
           << " by " << from;
 
   CHECK(state == RECOVERING || state == DISCONNECTED ||
@@ -3069,7 +3069,7 @@ void Slave::shutdownFramework(
 
   Framework* framework = getFramework(frameworkId);
   if (framework == nullptr) {
-    VLOG(1) << "Cannot shut down unknown framework " << frameworkId;
+    LOG(INFO) << "Cannot shut down unknown framework " << frameworkId;
     return;
   }
 
@@ -3079,7 +3079,7 @@ void Slave::shutdownFramework(
                    << " because it is terminating";
       break;
     case Framework::RUNNING:
-      LOG(INFO) << "Shutting down framework " << framework->id();
+      LOG(INFO) << "lele Shutting down framework " << framework->id();
 
       framework->state = Framework::TERMINATING;
 
@@ -4724,7 +4724,7 @@ void Slave::forward(StatusUpdate update)
   }
 
   CHECK_SOME(master);
-  LOG(INFO) << "Forwarding the update " << update << " to " << master.get();
+  LOG(INFO) << "lele Forwarding the update " << update << " to " << master.get();
 
   // NOTE: We forward the update even if framework/executor/task
   // doesn't exist because the status update manager will be expecting
@@ -5429,7 +5429,7 @@ void Slave::removeFramework(Framework* framework)
 {
   CHECK_NOTNULL(framework);
 
-  LOG(INFO)<< "Cleaning up framework " << framework->id();
+  LOG(INFO)<< "lele Cleaning up framework " << framework->id();
 
   CHECK(framework->state == Framework::RUNNING ||
         framework->state == Framework::TERMINATING);
@@ -5737,9 +5737,9 @@ void Slave::_checkDiskUsage(const Future<double>& usage)
                << (usage.isFailed() ? usage.failure() : "future discarded");
   } else {
     executorDirectoryMaxAllowedAge = age(usage.get());
-    LOG(INFO) << "Current disk usage " << std::setiosflags(std::ios::fixed)
-              << std::setprecision(2) << 100 * usage.get() << "%."
-              << " Max allowed age: " << executorDirectoryMaxAllowedAge;
+//    LOG(INFO) << "Current disk usage " << std::setiosflags(std::ios::fixed)
+//              << std::setprecision(2) << 100 * usage.get() << "%."
+//              << " Max allowed age: " << executorDirectoryMaxAllowedAge;
 
     // We prune all directories whose deletion time is within
     // the next 'gc_delay - age'. Since a directory is always

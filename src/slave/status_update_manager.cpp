@@ -282,7 +282,7 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
 
 void StatusUpdateManagerProcess::cleanup(const FrameworkID& frameworkId)
 {
-  LOG(INFO) << "Closing status update streams for framework " << frameworkId;
+  LOG(INFO) << "lele Closing status update streams for framework " << frameworkId;
 
   if (streams.contains(frameworkId)) {
     foreachkey (const TaskID& taskId, utils::copy(streams[frameworkId])) {
@@ -374,7 +374,7 @@ Timeout StatusUpdateManagerProcess::forward(
 {
   CHECK(!paused);
 
-  VLOG(1) << "Forwarding update " << update << " to the agent";
+  LOG(INFO) << "lele Forwarding update " << update << " to the agent";
 
   // Forward the update.
   forward_(update);
@@ -392,7 +392,7 @@ Future<bool> StatusUpdateManagerProcess::acknowledgement(
     const FrameworkID& frameworkId,
     const UUID& uuid)
 {
-  LOG(INFO) << "Received status update acknowledgement (UUID: " << uuid
+  LOG(INFO) << "lele Received status update acknowledgement (UUID: " << uuid
             << ") for task " << taskId
             << " of framework " << frameworkId;
 
@@ -528,7 +528,7 @@ void StatusUpdateManagerProcess::cleanupStatusUpdateStream(
     const TaskID& taskId,
     const FrameworkID& frameworkId)
 {
-  VLOG(1) << "Cleaning up status update stream"
+  LOG(INFO) << "lele Cleaning up status update stream"
           << " for task " << taskId
           << " of framework " << frameworkId;
 
