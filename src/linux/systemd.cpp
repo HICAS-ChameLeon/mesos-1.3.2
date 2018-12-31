@@ -93,7 +93,7 @@ Try<Nothing> extendLifetime(pid_t child)
                   assign.error());
   }
 
-  LOG(INFO) << "Assigned child process '" << child << "' to '"
+  LOG(INFO) << "lele Assigned child process '" << child << "' to '"
             << systemd::mesos::MESOS_EXECUTORS_SLICE << "'";
 
   return Nothing();

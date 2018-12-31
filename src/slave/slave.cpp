@@ -874,7 +874,7 @@ void Slave::shutdown(const UPID& from, const string& message)
 void Slave::fileAttached(const Future<Nothing>& result, const string& path)
 {
   if (result.isReady()) {
-    VLOG(1) << "Successfully attached file '" << path << "'";
+    LOG(INFO) << "lele Successfully attached file '" << path << "'";
   } else {
     LOG(ERROR) << "Failed to attach file '" << path << "': "
                << (result.isFailed() ? result.failure() : "discarded");
@@ -1876,7 +1876,7 @@ void Slave::_run(
   // fails, the task (or all tasks in a task group) are not launched.
   list<Future<bool>> authorizations;
 
-  LOG(INFO) << "Authorizing " << taskOrTaskGroup(task, taskGroup)
+  LOG(INFO) << "lele Authorizing " << taskOrTaskGroup(task, taskGroup)
             << " for framework " << frameworkId;
 
   foreach (const TaskInfo& _task, tasks) {
@@ -2044,7 +2044,7 @@ void Slave::__run(
     return;
   }
 
-  LOG(INFO) << "Launching " << taskOrTaskGroup(task, taskGroup)
+  LOG(INFO) << "lele Launching " << taskOrTaskGroup(task, taskGroup)
             << " for framework " << frameworkId;
 
   auto unallocated = [](const Resources& resources) {
@@ -2273,7 +2273,7 @@ void Slave::__run(
         executor->queuedTaskGroups.push_back(taskGroup.get());
       }
 
-      LOG(INFO) << "Queued " << taskOrTaskGroup(task, taskGroup)
+      LOG(INFO) << "lele Queued " << taskOrTaskGroup(task, taskGroup)
                 << " for executor " << *executor;
 
       break;
@@ -2295,7 +2295,7 @@ void Slave::__run(
         executor->queuedTaskGroups.push_back(taskGroup.get());
       }
 
-      LOG(INFO) << "Queued " << taskOrTaskGroup(task, taskGroup)
+      LOG(INFO) << "lele Queued " << taskOrTaskGroup(task, taskGroup)
                 << " for executor " << *executor;
 
       // Update the resource limits for the container. Note that the
@@ -2486,7 +2486,7 @@ void Slave::___run(
     // Add the task and send it to the executor.
     executor->addTask(task);
 
-    LOG(INFO) << "Sending queued task '" << task.task_id()
+    LOG(INFO) << "lele Sending queued task '" << task.task_id()
               << "' to executor " << *executor;
 
     RunTaskMessage message;
@@ -2694,6 +2694,7 @@ void Slave::launchExecutor(
   // Launch the container.
   Future<bool> launch;
   if (!executor->isCommandExecutor()) {
+    LOG(INFO)<<"lele exeutor is not a CommandExecutor";
     // If the executor is _not_ a command executor, this means that
     // the task will include the executor to run. The actual task to
     // run will be enqueued and subsequently handled by the executor
@@ -2708,6 +2709,8 @@ void Slave::launchExecutor(
         environment,
         framework->info.checkpoint());
   } else {
+    LOG(INFO)<<"lele exeutor is  a CommandExecutor";
+
     // An executor has _not_ been provided by the task and will
     // instead define a command and/or container to run. Right now,
     // these tasks will require an executor anyway and the slave
@@ -3611,7 +3614,7 @@ void Slave::subscribe(
                      << "executor " << *executor;
         executor->http->close();
       }
-
+      LOG(INFO)<<"lele changes executor->state from REGISTERING to RUNNING";
       executor->state = Executor::RUNNING;
 
       // Save the connection for the executor.
@@ -3781,7 +3784,7 @@ void Slave::registerExecutor(
     const FrameworkID& frameworkId,
     const ExecutorID& executorId)
 {
-  LOG(INFO) << "Got registration for executor '" << executorId
+  LOG(INFO) << "lele Got registration for executor '" << executorId
             << "' of framework " << frameworkId << " from "
             << stringify(from);
 
@@ -3849,6 +3852,7 @@ void Slave::registerExecutor(
       reply(ShutdownExecutorMessage());
       break;
     case Executor::REGISTERING: {
+      LOG(INFO)<<"lele changes executor->state from REGISTERING to RUNNING";
       executor->state = Executor::RUNNING;
 
       // Save the pid for the executor.
@@ -4047,6 +4051,7 @@ void Slave::reregisterExecutor(
       break;
 
     case Executor::REGISTERING: {
+      LOG(INFO)<<"lele changes executor->state from REGISTERING to RUNNING";
       executor->state = Executor::RUNNING;
 
       executor->pid = from; // Update the pid.
@@ -7066,7 +7071,7 @@ Executor* Framework::addExecutor(const ExecutorInfo& executorInfo)
 
   executors[executorInfo.executor_id()] = executor;
 
-  LOG(INFO) << "Launching executor '" << executorInfo.executor_id()
+  LOG(INFO) << "lele Launching executor '" << executorInfo.executor_id()
             << "' of framework " << id()
             << " with resources " << executorInfo.resources()
             << " in work directory '" << directory << "'";

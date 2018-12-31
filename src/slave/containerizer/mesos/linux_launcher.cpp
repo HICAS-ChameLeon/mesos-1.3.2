@@ -426,7 +426,7 @@ Try<pid_t> LinuxLauncherProcess::fork(
 
   int cloneFlags = cloneNamespaces.isSome() ? cloneNamespaces.get() : 0;
 
-  LOG(INFO) << "Launching " << (target.isSome() ? "nested " : "")
+  LOG(INFO) << "lele Launching " << (target.isSome() ? "nested " : "")
             << "container " << containerId << " and cloning with namespaces "
             << ns::stringify(cloneFlags);
 
@@ -468,6 +468,7 @@ Try<pid_t> LinuxLauncherProcess::fork(
       environment,
       [target, enterFlags, cloneFlags](const lambda::function<int()>& child) {
         if (target.isSome()) {
+          LOG(INFO)<<"lele target = container->pid.get() is Some";
           Try<pid_t> pid = ns::clone(
               target.get(),
               enterFlags,
@@ -480,6 +481,7 @@ Try<pid_t> LinuxLauncherProcess::fork(
           }
           return pid.get();
         } else {
+          LOG(INFO)<<"lele target = container->pid.get() is not Some";
           return os::clone(child, cloneFlags);
         }
       },
@@ -502,7 +504,7 @@ Try<pid_t> LinuxLauncherProcess::fork(
 
 Future<Nothing> LinuxLauncherProcess::destroy(const ContainerID& containerId)
 {
-  LOG(INFO) << "Asked to destroy container " << containerId;
+  LOG(INFO) << "lele Asked to destroy container " << containerId;
 
   Option<Container> container = containers.get(containerId);
 

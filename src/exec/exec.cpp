@@ -159,7 +159,7 @@ public:
       recoveryTimeout(_recoveryTimeout),
       shutdownGracePeriod(_shutdownGracePeriod)
   {
-    LOG(INFO) << "Version: " << MESOS_VERSION;
+    LOG(INFO) << "lele Version: " << MESOS_VERSION;
 
     install<ExecutorRegisteredMessage>(
         &ExecutorProcess::registered,
@@ -209,12 +209,13 @@ public:
 protected:
   virtual void initialize()
   {
-    VLOG(1) << "Executor started at: " << self()
+    LOG(INFO) << "lele Executor started at: " << self()
             << " with pid " << getpid();
 
     link(slave);
 
     // Register with slave.
+    LOG(INFO)<<" lele ExecutorProcess send a RegisterExecutorMessage to slave ";
     RegisterExecutorMessage message;
     message.mutable_framework_id()->MergeFrom(frameworkId);
     message.mutable_executor_id()->MergeFrom(executorId);
@@ -234,7 +235,7 @@ protected:
       return;
     }
 
-    LOG(INFO) << "Executor registered on agent " << slaveId;
+    LOG(INFO) << "lele Executor registered on agent " << slaveId;
 
     connected = true;
     connection = UUID::random();
@@ -246,18 +247,18 @@ protected:
 
     executor->registered(driver, executorInfo, frameworkInfo, slaveInfo);
 
-    VLOG(1) << "Executor::registered took " << stopwatch.elapsed();
+    LOG(INFO) << "lele Executor::registered took " << stopwatch.elapsed();
   }
 
   void reregistered(const SlaveID& slaveId, const SlaveInfo& slaveInfo)
   {
     if (aborted.load()) {
-      VLOG(1) << "Ignoring re-registered message from agent " << slaveId
+      LOG(INFO) << "lele Ignoring re-registered message from agent " << slaveId
               << " because the driver is aborted!";
       return;
     }
 
-    LOG(INFO) << "Executor re-registered on agent " << slaveId;
+    LOG(INFO) << "lele Executor re-registered on agent " << slaveId;
 
     connected = true;
     connection = UUID::random();
@@ -275,12 +276,12 @@ protected:
   void reconnect(const UPID& from, const SlaveID& slaveId)
   {
     if (aborted.load()) {
-      VLOG(1) << "Ignoring reconnect message from agent " << slaveId
+      LOG(INFO) << "lele Ignoring reconnect message from agent " << slaveId
               << " because the driver is aborted!";
       return;
     }
 
-    LOG(INFO) << "Received reconnect request from agent " << slaveId;
+    LOG(INFO) << "lele Received reconnect request from agent " << slaveId;
 
     // Update the slave link.
     slave = from;
@@ -328,7 +329,7 @@ protected:
 
     tasks[task.task_id()] = task;
 
-    VLOG(1) << "Executor asked to run task '" << task.task_id() << "'";
+    VLOG(1) << "lele Executor asked to run task '" << task.task_id() << "'";
 
     Stopwatch stopwatch;
     if (FLAGS_v >= 1) {
@@ -385,7 +386,7 @@ protected:
       return;
     }
 
-    VLOG(1) << "Executor received status update acknowledgement "
+    LOG(INFO) << "lele Executor received status update acknowledgement "
             << uuid_.get() << " for task " << taskId
             << " of framework " << frameworkId;
 
@@ -413,7 +414,7 @@ protected:
       return;
     }
 
-    VLOG(1) << "Executor received framework message";
+    LOG(INFO) << "lele Executor received framework message";
 
     Stopwatch stopwatch;
     if (FLAGS_v >= 1) {
@@ -422,7 +423,7 @@ protected:
 
     executor->frameworkMessage(driver, data);
 
-    VLOG(1) << "Executor::frameworkMessage took " << stopwatch.elapsed();
+    LOG(INFO) << "lele Executor::frameworkMessage took " << stopwatch.elapsed();
   }
 
   void shutdown()
@@ -467,7 +468,7 @@ protected:
 
   void abort()
   {
-    LOG(INFO) << "Deactivating the executor libprocess";
+    LOG(INFO) << "lele Deactivating the executor libprocess";
     CHECK(aborted.load());
 
     synchronized (mutex) {
@@ -568,7 +569,7 @@ protected:
     // the HTTP API, this can be overwritten by the slave instead.
     update->mutable_status()->mutable_slave_id()->CopyFrom(slaveId);
 
-    VLOG(1) << "Executor sending status update " << *update;
+    LOG(INFO) << "lele Executor sending status update " << *update;
 
     // Capture the status update.
     updates[uuid] = *update;

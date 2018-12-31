@@ -998,7 +998,7 @@ Future<bool> MesosContainerizerProcess::launch(
         flags.default_container_info.get());
   }
 
-  LOG(INFO) << "Starting container " << containerId
+  LOG(INFO) << "lele Starting container " << containerId
             << " for executor '" << executorInfo.executor_id()
             << "' of framework " << executorInfo.framework_id();
 
@@ -1294,7 +1294,7 @@ Future<bool> MesosContainerizerProcess::_launch(
     // command is a valid command.
     if (isolatorLaunchInfo->has_command() &&
         launchInfo.has_command()) {
-      VLOG(1) << "Merging launch commands '" << launchInfo.command()
+      LOG(INFO) << "lele Merging launch commands '" << launchInfo.command()
               << "' and '" << isolatorLaunchInfo->command()
               << "' from two different isolators";
     }
@@ -1552,7 +1552,7 @@ Future<bool> MesosContainerizerProcess::_launch(
   launchFlags.runtime_directory = runtimePath;
 #endif // __WINDOWS__
 
-  VLOG(1) << "Launching '" << MESOS_CONTAINERIZER << "' with flags '"
+  LOG(INFO) << "lele Launching '" << MESOS_CONTAINERIZER << "' with flags '"
           << launchFlags << "'";
 
   Option<int> _enterNamespaces;
@@ -1651,7 +1651,7 @@ Future<bool> MesosContainerizerProcess::_launch(
         container->config.executor_info().executor_id(),
         containerId);
 
-    LOG(INFO) << "Checkpointing container's forked pid " << pid
+    LOG(INFO) << "lele Checkpointing container's forked pid " << pid
               << " to '" << path << "'";
 
     Try<Nothing> checkpointed =
@@ -2551,7 +2551,7 @@ void MesosContainerizerProcess::reaped(const ContainerID& containerId)
     return;
   }
 
-  LOG(INFO) << "Container " << containerId << " has exited";
+  LOG(INFO) << "lele Container " << containerId << " has exited";
 
   // The executor has exited so destroy the container.
   destroy(containerId);

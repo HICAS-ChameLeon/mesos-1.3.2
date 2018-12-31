@@ -4529,7 +4529,7 @@ void Master::_accept(
 
             // TODO(bmahler): Consider updating this log message to
             // indicate when the executor is also being launched.
-            LOG(INFO) << "Launching task " << task_.task_id()
+            LOG(INFO) << "lele Launching task " << task_.task_id()
                       << " of framework " << *framework
                       << " with resources " << task_.resources()
                       << " on agent " << *slave;
@@ -7322,7 +7322,7 @@ void Master::offer(
     return;
   }
 
-  LOG(INFO) << "Sending " << message.offers().size()
+  LOG(INFO) << "lele Sending " << message.offers().size()
             << " offers to framework " << *framework;
 
   framework->send(message);
