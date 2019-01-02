@@ -391,6 +391,10 @@ Try<pid_t> LinuxLauncherProcess::fork(
     const Option<int>& enterNamespaces,
     const Option<int>& cloneNamespaces)
 {
+  LOG(INFO)<<"lele in linux_launcher.cpp path is "<<path;
+  LOG(INFO)<<"lele  argv.size is "<<argv.size();
+  LOG(INFO)<<"lele in linux_launcher.cpp environment is some = "<<environment.isSome();
+
   // Make sure this container (nested or not) is unique.
   if (containers.contains(containerId)) {
     return Error("Container '" + stringify(containerId) + "' already exists");
@@ -457,6 +461,7 @@ Try<pid_t> LinuxLauncherProcess::fork(
         cgroup(containerId),
         child);
   }));
+
 
   Try<Subprocess> child = subprocess(
       path,

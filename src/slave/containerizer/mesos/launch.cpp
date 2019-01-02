@@ -662,7 +662,7 @@ int MesosContainerizerLaunch::execute()
   string executable(launchInfo.command().shell()
     ? os::Shell::name
     : launchInfo.command().value().c_str());
-
+  LOG(INFO)<<"lele the executable for container is "<<executable;
   os::raw::Argv argv(launchInfo.command().shell()
     ? vector<string>({
           os::Shell::arg0,

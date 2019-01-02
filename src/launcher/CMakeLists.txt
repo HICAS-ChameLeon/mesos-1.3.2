@@ -33,6 +33,8 @@ set(FETCHER_EXECUTABLE_SRC fetcher.cpp)
 # THE LAUNCHER EXECUTOR AND FETCHER EXECUTABLES.
 ################################################
 add_executable(${DEFAULT_EXECUTOR_TARGET} ${DEFAULT_EXECUTOR_SRC})
+message(36 lele ${MESOS_EXECUTOR})
+message(37 lele ${EXECUTOR_EXECUTABLE_SRC})
 add_executable(${MESOS_EXECUTOR} ${EXECUTOR_EXECUTABLE_SRC})
 
 if (NOT WIN32)
