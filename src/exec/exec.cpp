@@ -270,7 +270,7 @@ protected:
 
     executor->reregistered(driver, slaveInfo);
 
-    VLOG(1) << "Executor::reregistered took " << stopwatch.elapsed();
+    LOG(INFO) << "Executor::reregistered took " << stopwatch.elapsed();
   }
 
   void reconnect(const UPID& from, const SlaveID& slaveId)

@@ -808,8 +808,9 @@ int MesosContainerizerLaunch::execute()
     }
   }
 #endif // __WINDOWS__
-
+  LOG(INFO)<<"lele in src/slave/containerizer/mesos/launch.cpp "<<executable;
   if (envp.isSome()) {
+    LOG(INFO)<<"lele envp is some";
     os::execvpe(executable.c_str(), argv, envp.get());
   } else {
     os::execvp(executable.c_str(), argv);

@@ -284,6 +284,7 @@ public:
 
   void send(const Call& call)
   {
+      LOG(INFO)<<"lele 287 executor.cpp send a Call to agent ";
     Option<Error> error = validate(devolve(call));
     if (error.isSome()) {
       drop(call, error->message);

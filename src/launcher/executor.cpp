@@ -257,6 +257,7 @@ protected:
     // We initialize the library here to ensure that callbacks are only invoked
     // after the process has spawned.
     if (value.isSome() && value.get() == "1") {
+        LOG(INFO)<<"lele in src/launcher/executor.cpp new Mesos(";
       mesos.reset(new Mesos(
           ContentType::PROTOBUF,
           defer(self(), &Self::connected),
@@ -270,7 +271,9 @@ protected:
             }
           })));
     } else {
-      mesos.reset(new V0ToV1Adapter(
+        LOG(INFO)<<"lele in src/launcher/executor.cpp new V0ToV1Adapter ";
+
+        mesos.reset(new V0ToV1Adapter(
           defer(self(), &Self::connected),
           defer(self(), &Self::disconnected),
           defer(self(), [this](queue<v1::executor::Event> events) {
@@ -1188,7 +1191,6 @@ int main(int argc, char** argv)
   mesos::ExecutorID executorId;
 
   process::initialize();
-
   // Load flags from command line.
   Try<flags::Warnings> load = flags.load(None(), &argc, &argv);
 
@@ -1201,8 +1203,9 @@ int main(int argc, char** argv)
     cout << flags.usage() << endl;
     return EXIT_SUCCESS;
   }
+  LOG(INFO)<<"lele in src/launcher/executor.cpp";
 
-  // Log any flag warnings (after logging is initialized).
+    // Log any flag warnings (after logging is initialized).
   foreach (const flags::Warning& warning, load->warnings) {
     LOG(WARNING) << warning.message;
   }
@@ -1253,6 +1256,7 @@ int main(int argc, char** argv)
           frameworkId,
           executorId,
           shutdownGracePeriod));
+    LOG(INFO)<<"lele in src/launcher/executor.cpp CommandExecutor executor begins to spawn";
 
   process::spawn(executor.get());
   process::wait(executor.get());
