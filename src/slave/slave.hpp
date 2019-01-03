@@ -982,6 +982,7 @@ struct Executor
       }
     } else if (pid.isSome()) {
       slave->send(pid.get(), message);
+      LOG(INFO)<<"lele slave send a RuntaskMessage to the executor, the UPID of executor is： "<<pid.get();
     } else {
       LOG(WARNING) << "Unable to send event to executor " << *this
                    << ": unknown connection type";
