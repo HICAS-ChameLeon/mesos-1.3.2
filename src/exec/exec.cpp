@@ -329,7 +329,7 @@ protected:
 
     tasks[task.task_id()] = task;
 
-    VLOG(1) << "lele Executor asked to run task '" << task.task_id() << "'";
+    LOG(INFO) << "lele Executor asked to run task '" << task.task_id() << "'";
 
     Stopwatch stopwatch;
     if (FLAGS_v >= 1) {
@@ -338,7 +338,7 @@ protected:
 
     executor->launchTask(driver, task);
 
-    VLOG(1) << "Executor::launchTask took " << stopwatch.elapsed();
+    LOG(INFO)  << "Executor::launchTask took " << stopwatch.elapsed();
   }
 
   void killTask(const TaskID& taskId)

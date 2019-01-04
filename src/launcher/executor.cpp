@@ -166,7 +166,7 @@ public:
 
   void received(const Event& event)
   {
-    cout << "Received " << event.type() << " event" << endl;
+    cout << "lele at src/launcher/executor.cpp line 169. Received " << event.type() << " event" << endl;
 
     switch (event.type()) {
       case Event::SUBSCRIBED: {
@@ -468,7 +468,11 @@ protected:
         path::join(launcherDir, MESOS_CONTAINERIZER),
         MesosContainerizerLaunch::NAME).get();
 
-    cout << "Running '" << commandString << "'" << endl;
+    cout << "lele at src/launcher/executor.cpp line 471. Running '" << commandString << "'" << endl;
+    cout<<"lele launch_info is below:"<<endl;
+    for(auto it=launchFlags.launch_info.get().values.begin();it!=launchFlags.launch_info.get().values.end();it++){
+      cout<<it->first<<" : "<<it->second;
+    }
 
     // Fork the child using launcher.
     vector<string> argv(2);
@@ -479,8 +483,8 @@ protected:
 #ifdef __WINDOWS__
     parentHooks.emplace_back(Subprocess::ParentHook::CREATE_JOB());
 #endif // __WINDOWS__
-
-    Try<Subprocess> s = subprocess(
+    cout<<"\n lele 483 "<<path::join(launcherDir, MESOS_CONTAINERIZER);
+            Try<Subprocess> s = subprocess(
         path::join(launcherDir, MESOS_CONTAINERIZER),
         argv,
         Subprocess::FD(STDIN_FILENO),
@@ -616,7 +620,7 @@ protected:
       launchEnvironment.add_variables()->CopyFrom(variable);
     }
 
-    cout << "Starting task " << taskId.get() << endl;
+    cout << "\n lele at src/launcher/executor.cpp line 623. Starting task " << taskId.get() << endl;
 
     pid = launchTaskSubprocess(
         command,
@@ -628,7 +632,7 @@ protected:
         workingDirectory,
         capabilities);
 
-    cout << "Forked command at " << pid << endl;
+    cout << "\n lele at src/launcher/executor.cpp line 635. Forked command at " << pid << endl;
 
     if (task.has_check()) {
       vector<string> namespaces;
