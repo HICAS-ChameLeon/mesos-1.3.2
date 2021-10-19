@@ -91,7 +91,6 @@
 #include "module/manager.hpp"
 
 #include "watcher/whitelist_watcher.hpp"
-#include "lemon_MILP_bt.hpp"
 
 using google::protobuf::RepeatedPtrField;
 
@@ -1280,7 +1279,6 @@ void Master::exited(const FrameworkID& frameworkId, const HttpConnection& http)
     if (framework->http.isSome() &&
         framework->http.get().writer == http.writer) {
       CHECK_EQ(frameworkId, framework->id());
-      LOG(INFO)<< "1282 prepared to exit the framework";
       _exited(framework);
       return;
     }
@@ -1305,7 +1303,7 @@ void Master::exited(const UPID& pid)
       FrameworkErrorMessage message;
       message.set_message("Framework disconnected");
       framework->send(message);
-      LOG(INFO)<< "1306 prepared to exit the framework";
+
       _exited(framework);
       return;
     }
@@ -1589,7 +1587,7 @@ void Master::visit(const ExitedEvent& event)
   const Option<string> principal = isRegisteredFramework
     ? frameworks.principals[event.pid]
     : Option<string>::none();
-  LOG(INFO)<<"1592 visit master exitedEvent ";
+
   // Necessary to disambiguate below.
   typedef void(Self::*F)(const ExitedEvent&);
 
@@ -2916,13 +2914,6 @@ void Master::_subscribe(
     frameworkInfo_.mutable_id()->CopyFrom(newFrameworkId());
 
     Framework* framework = new Framework(this, flags, frameworkInfo_, from);
-
-    if(framework->http.isSome()){
-      LOG(INFO)<<" framework->http is some ";
-
-    }else{
-      LOG(INFO)<<" framework->http is none ";
-    }
 
     addFramework(framework);
 
@@ -5533,7 +5524,6 @@ void Master::_registerSlave(
                  << ", minimum supported agent version is "
                  << MINIMUM_AGENT_VERSION;
     return;
-
   }
 
   // Check if this slave is already registered (because it retries).
@@ -7258,31 +7248,8 @@ void Master::offer(
       offer->mutable_slave_id()->MergeFrom(slave->id);
       offer->set_hostname(slave->info.hostname());
       offer->mutable_url()->MergeFrom(url);
-      Resources temp_offered = offered;
-
-      LOG(INFO)<<"lele temp_offered "<<temp_offered.size();
-      auto temp_reservation = temp_offered.reservations();
-//      temp_offered.get()
       offer->mutable_resources()->MergeFrom(offered);
-      auto temp_attributes = slave->info.attributes();
-      Attribute* attribute = temp_attributes.Add();
-      string attr_name = "lele_mem";
-      attribute->set_name(attr_name);
-//      attribute->set_allocated_name(&attr_name);
-      attribute->set_type(mesos::Value_Type_SCALAR);
-      attribute->mutable_scalar()->set_value(5120.0);
-
-      Attribute* attribute_cpu = temp_attributes.Add();
-      string attr_cpus = "lele_cpus";
-      attribute_cpu->set_name(attr_cpus);
-//      attribute->set_allocated_name(&attr_name);
-      attribute_cpu->set_type(mesos::Value_Type_SCALAR);
-      attribute_cpu->mutable_scalar()->set_value(5);
-//      attribute->
-//      mesos::Value_Type_SCALAR* sc = mesos::Value_Type_SCALAR
-//      attribute->set
-//      offer->mutable_attributes()->MergeFrom(slave->info.attributes());
-      offer->mutable_attributes()->MergeFrom(temp_attributes);
+      offer->mutable_attributes()->MergeFrom(slave->info.attributes());
       offer->mutable_allocation_info()->set_role(role);
 
       // Add all framework's executors running on this slave.
@@ -7761,7 +7728,7 @@ void Master::addFramework(Framework* framework)
       CHECK_SOME(framework->http);
 
       const HttpConnection& http = framework->http.get();
-      LOG(INFO)<<"lele http.closed ";
+
       http.closed()
         .onAny(defer(self(), &Self::exited, framework->id(), http));
     }
@@ -7769,11 +7736,6 @@ void Master::addFramework(Framework* framework)
 
   // There should be no offered resources yet!
   CHECK_EQ(Resources(), framework->totalOfferedResources);
-  LOG(INFO)<<"lele framework is active ? "<<framework->active();
-  framework->state = Framework::State::INACTIVE;
-//  framework->state = Framework::State::ACTIVE;
-
-  chameleon::MILP::insert_new_lp_model(framework->info.name());
 
   allocator->addFramework(
       framework->id(),
@@ -7863,7 +7825,6 @@ Try<Nothing> Master::activateRecoveredFramework(
     link(pid.get());
   } else {
     framework->updateConnection(http.get());
-    LOG(INFO)<<"lele http.closed ";
     http->closed()
       .onAny(defer(self(), &Self::exited, framework->id(), http.get()));
   }
@@ -7946,7 +7907,6 @@ void Master::failoverFramework(Framework* framework, const HttpConnection& http)
   }
 
   framework->updateConnection(http);
-  LOG(INFO)<<"lele http.closed ";
 
   http.closed()
     .onAny(defer(self(), &Self::exited, framework->id(), http));
