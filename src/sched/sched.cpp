@@ -288,6 +288,9 @@ protected:
         &SchedulerProcess::error,
         &FrameworkErrorMessage::message);
 
+      install<MasterInfo>(
+              &SchedulerProcess::change);
+
     // Start detecting masters.
     detector->detect()
       .onAny(defer(self(), &SchedulerProcess::detected, lambda::_1));
@@ -309,6 +312,10 @@ protected:
 
     if (_master.get().isSome()) {
       master = _master.get().get();
+      // change by lele 2019-3-14
+        if(_master.get().get().pid().find("7000") != string::npos){
+            master.get().set_pid("super_"+master.get().pid());
+        }
     } else {
       master = None();
     }
@@ -847,7 +854,6 @@ protected:
       subscribe->set_force(failover);
       call.mutable_framework_id()->CopyFrom(framework.id());
     }
-
     send(master.get().pid(), call);
 
     // Bound the maximum backoff by 'REGISTRATION_RETRY_INTERVAL_MAX'.
@@ -1203,7 +1209,15 @@ protected:
     VLOG(1) << "Scheduler::error took " << stopwatch.elapsed();
   }
 
-  void stop(bool failover)
+  void change(const UPID& from, const MasterInfo& master_info){
+      LOG(INFO)<<"MAKUN received MasterInfo";
+      master.get().set_ip(master_info.ip());
+      master.get().set_port(master_info.port());
+      master.get().set_pid(master_info.pid());
+  }
+
+
+            void stop(bool failover)
   {
     LOG(INFO) << "Stopping framework " << framework.id();
 

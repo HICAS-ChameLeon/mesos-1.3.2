@@ -338,7 +338,7 @@ protected:
 
     executor->launchTask(driver, task);
 
-    LOG(INFO)  << "Executor::launchTask took " << stopwatch.elapsed();
+    LOG(INFO)  << "lele Executor::launchTask took " << stopwatch.elapsed();
   }
 
   void killTask(const TaskID& taskId)
@@ -718,7 +718,7 @@ Status MesosExecutorDriver::start()
     value = os::getenv("MESOS_SLAVE_PID");
     if (value.isNone()) {
       EXIT(EXIT_FAILURE)
-        << "Expecting 'MESOS_SLAVE_PID' to be set in the environment";
+        << "lele at src/exec/exec.cpp line 721. Expecting 'MESOS_SLAVE_PID' to be set in the environment";
     }
 
     slave = UPID(value.get());
@@ -728,7 +728,7 @@ Status MesosExecutorDriver::start()
     value = os::getenv("MESOS_SLAVE_ID");
     if (value.isNone()) {
       EXIT(EXIT_FAILURE)
-        << "Expecting 'MESOS_SLAVE_ID' to be set in the environment";
+        << "lele at src/exec/exec.cpp line 731. Expecting 'MESOS_SLAVE_ID' to be set in the environment";
     }
     slaveId.set_value(value.get());
 

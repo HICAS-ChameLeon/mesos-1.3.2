@@ -68,6 +68,8 @@ class DockerTest : public MesosTest
       docker.get()->ps(true, NAME_PREFIX);
 
     AWAIT_READY(containers);
+//    containers.failure()
+
 
     // Cleanup all mesos launched containers.
     foreach (const Docker::Container& container, containers.get()) {

@@ -219,7 +219,7 @@ static Try<string> download(
   // Trim leading whitespace for 'sourceUri'.
   const string sourceUri = strings::trim(_sourceUri, strings::PREFIX);
 
-  LOG(INFO) << "Fetching URI '" << sourceUri << "'";
+  LOG(INFO) << "lele Fetching URI '" << sourceUri << "'";
 
   Try<Nothing> validation = Fetcher::validateUri(sourceUri);
   if (validation.isError()) {
@@ -282,7 +282,7 @@ static Try<string> fetchBypassingCache(
     const string& sandboxDirectory,
     const Option<string>& frameworksHome)
 {
-  LOG(INFO) << "Fetching directly into the sandbox directory";
+  LOG(INFO) << "lele Fetching directly into the sandbox directory";
 
   // TODO(mrbrowning): Factor out duplicated processing of "output_file" field
   // here and in fetchFromCache into a separate helper function.
@@ -530,7 +530,7 @@ int main(int argc, char* argv[])
   CHECK_SOME(jsonFetcherInfo)
     << "Missing MESOS_FETCHER_INFO environment variable";
 
-  LOG(INFO) << "Fetcher Info: " << jsonFetcherInfo.get();
+  LOG(INFO) << "lele Fetcher Info: " << jsonFetcherInfo.get();
 
   Try<JSON::Object> parse = JSON::parse<JSON::Object>(jsonFetcherInfo.get());
   CHECK_SOME(parse) << "Failed to parse MESOS_FETCHER_INFO: " << parse.error();

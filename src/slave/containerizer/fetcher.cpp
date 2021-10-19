@@ -350,7 +350,7 @@ Future<Nothing> FetcherProcess::fetch(
     const SlaveID& slaveId,
     const Flags& flags)
 {
-  VLOG(1) << "Starting to fetch URIs for container: " << containerId
+  LOG(INFO) << "lele Starting to fetch URIs for container: " << containerId
           << ", directory: " << sandboxDirectory;
 
   // TODO(bernd-mesos): This will disappear once we inject flags at
@@ -861,7 +861,7 @@ Future<Nothing> FetcherProcess::run(
   // supports that.
   environment.emplace("LIBPROCESS_IP", "127.0.0.1");
 
-  VLOG(1) << "Fetching URIs using command '" << command << "'";
+  LOG(INFO) << "lele Fetching URIs using command '" << command << "'";
 
   Try<Subprocess> fetcherSubprocess = subprocess(
       command,

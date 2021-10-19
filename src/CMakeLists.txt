@@ -14,6 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+add_subdirectory(lemon-1.3.1)
+
+INCLUDE_DIRECTORIES(
+        ${CMAKE_SOURCE_DIR}/src/lemon-1.3.1/
+        ${CMAKE_BINARY_DIR}/src/lemon-1.3.1/
+)
+
 # GENERATE PUBLIC AND INTERNAL PROTOBUFS.
 #########################################
 include(MesosProtobuf)
@@ -576,7 +584,7 @@ endif (WIN32)
 
 # ADD LINKER FLAGS (generates, e.g., -lglog on Linux).
 ######################################################
-target_link_libraries(${MESOS_LIBS_TARGET} ${MESOS_PROTOBUF_TARGET} ${AGENT_LIBS})
+target_link_libraries(${MESOS_LIBS_TARGET} ${MESOS_PROTOBUF_TARGET} ${AGENT_LIBS} lemon)
 
 # BUILD THE MESOS EXECUTABLES.
 ##############################

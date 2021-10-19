@@ -394,6 +394,10 @@ Try<pid_t> LinuxLauncherProcess::fork(
   LOG(INFO)<<"lele in linux_launcher.cpp path is "<<path;
   LOG(INFO)<<"lele  argv.size is "<<argv.size();
   LOG(INFO)<<"lele in linux_launcher.cpp environment is some = "<<environment.isSome();
+  map<string,string> temp_env = environment.get();
+  for(auto it=temp_env.begin();it!=temp_env.end();it++){
+    LOG(INFO)<<"lele "<<it->first<<" : "<<it->second;
+  }
 
   // Make sure this container (nested or not) is unique.
   if (containers.contains(containerId)) {

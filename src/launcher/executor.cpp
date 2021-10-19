@@ -558,9 +558,11 @@ protected:
     if (command.shell()) {
       CHECK(command.has_value())
         << "Shell command of task '" << taskId.get() << "' is not specified";
+      LOG(INFO)<<"lele Shell command of task "<<taskId.get()<<" is "<<command.value();
     } else {
       CHECK(command.has_value())
         << "Executable of task '" << taskId.get() << "' is not specified";
+      LOG(INFO)<<"lele Shell command of task "<<taskId.get()<<" doesn't exist";
     }
 
     // Determine the environment for the command to be launched.
@@ -632,7 +634,7 @@ protected:
         workingDirectory,
         capabilities);
 
-    cout << "\n lele at src/launcher/executor.cpp line 635. Forked command at " << pid << endl;
+    cout << "\n lele at src/launcher/executor.cpp line 635. Forked mesos-containerizer command at " << pid << endl;
 
     if (task.has_check()) {
       vector<string> namespaces;

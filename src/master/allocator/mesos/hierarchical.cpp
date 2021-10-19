@@ -155,7 +155,7 @@ void HierarchicalAllocatorProcess::initialize(
   roleSorter->initialize(fairnessExcludeResourceNames);
   quotaRoleSorter->initialize(fairnessExcludeResourceNames);
 
-  VLOG(1) << "Initialized hierarchical allocator process";
+  LOG(INFO) << "Initialized hierarchical allocator process";
 
   delay(allocationInterval, self(), &Self::batch);
 }
@@ -1621,8 +1621,7 @@ void HierarchicalAllocatorProcess::__allocate()
         if (isFiltered(frameworkId, role, slaveId, resources)) {
           continue;
         }
-
-        VLOG(2) << "Allocating " << resources << " on agent " << slaveId
+        LOG(INFO) << "lele Allocating " << resources << " on agent " << slaveId
                 << " to role " << role << " of framework " << frameworkId
                 << " as part of its role quota";
 
@@ -1817,7 +1816,7 @@ void HierarchicalAllocatorProcess::__allocate()
           continue;
         }
 
-        VLOG(2) << "Allocating " << resources << " on agent " << slaveId
+        LOG(INFO) << "lele Allocating " << resources << " on agent " << slaveId
                 << " to role " << role << " of framework " << frameworkId;
 
         resources.allocate(role);

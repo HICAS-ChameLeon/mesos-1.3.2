@@ -1543,7 +1543,7 @@ Future<pid_t> DockerContainerizerProcess::launchExecutorProcess(
         container->directory,
         container->taskEnvironment);
 
-    VLOG(1) << "Launching 'mesos-docker-executor' with flags '"
+    LOG(INFO) << "Launching 'mesos-docker-executor' with flags '"
             << launchFlags << "'";
 
     // Construct the mesos-docker-executor using the "name" we gave the
