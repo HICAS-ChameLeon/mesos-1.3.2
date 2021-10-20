@@ -350,8 +350,13 @@ private:
     process.session = getsid(0);
     process.set.store(true);
 
-    // Copy it into shared memory.
-    memcpy(tree.memory.get(), &process, sizeof(Tree::Memory));
+   // Copy it into shared memory.
+//    memcpy(tree.memory.get(), &process, sizeof(Tree::Memory));
+
+
+
+// Copy it into shared memory.
+    memcpy((char*)tree.memory.get(), (char*)&process, sizeof(Tree::Memory));
 
     // Execute the function, if any.
     if (function.isSome()) {

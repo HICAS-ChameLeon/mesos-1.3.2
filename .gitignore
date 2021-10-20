@@ -1,6 +1,7 @@
 # First, ignore yourself.
 /cmake-build-debug
 /build
+/build_libmesos
 .idea
 
 
