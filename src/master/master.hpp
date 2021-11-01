@@ -1797,7 +1797,7 @@ private:
     // 'flags.rate_limits'.
     Option<process::Owned<BoundedRateLimiter>> defaultLimiter;
   } frameworks;
-
+  std::vector<std::string> m_registered_framework_names;
   struct Subscribers
   {
     // Represents a client subscribed to the 'api/vX' endpoint.

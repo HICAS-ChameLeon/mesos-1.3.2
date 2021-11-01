@@ -213,7 +213,7 @@ namespace chameleon {
                 Mip::Col a3 = mip.addCol();
                 Mip::Col a4 = mip.addCol();
             // Add rows (constraints) to the problem
-            LOG(INFO)<<"target cpus and memory are "<<cpus <<" "<<mem;
+            LOG(INFO)<<"lele target cpus and memory are "<<cpus <<" "<<mem;
                 mip.addRow(a1 + a3 == cpus);
                 mip.addRow(a2 + a4 == mem);
                 // Set lower and upper bounds for the columns (variables)

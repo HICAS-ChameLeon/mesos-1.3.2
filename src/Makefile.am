@@ -116,8 +116,8 @@ AM_CXXFLAGS += @STACK_PROTECTOR@
 AM_CXXFLAGS += -fPIC -fPIE
 endif
 
-AM_LIBS = $(PTHREAD_LIBS)
-
+AM_LIBS = $(PTHREAD_LIBS) -llemon
+AM_LDFLAGS  += -L/home/lemaker/open-source/mesos-1.3.2/build/src/lemon-1.3.1/lemon
 # Setup CPPFLAGS that are used for most source files.
 MESOS_CPPFLAGS = $(AM_CPPFLAGS)
 MESOS_CPPFLAGS += -Werror
@@ -1461,6 +1461,7 @@ libmesos_la_LIBADD =							\
   $(LIB_ZOOKEEPER)							\
   -lsvn_subr-1								\
   -lsvn_delta-1								\
+  -lemon							\
   -lapr-1
 
 
@@ -1478,7 +1479,7 @@ mesos_master_LDADD = libmesos.la $(LDADD)
 bin_PROGRAMS += mesos-local
 mesos_local_SOURCES = local/main.cpp
 mesos_local_CPPFLAGS = $(MESOS_CPPFLAGS)
-mesos_local_LDADD = libmesos.la $(LDADD)
+mesos_local_LDADD = libmesos.la $(LDADD) -lemon
 
 pkglibexec_PROGRAMS += mesos-fetcher
 mesos_fetcher_SOURCES = launcher/fetcher.cpp
