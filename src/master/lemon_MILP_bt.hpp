@@ -181,10 +181,11 @@ namespace chameleon {
         }
 
         static unordered_map<string,BTLinearModel> m_bt_lps;
+        static bool m_ILP_solution;
     };
 
     unordered_map<string,BTLinearModel> MILP::m_bt_lps = MILP::create_bts();
-
+    bool MILP::m_ILP_solution = false;
     /**
      *
      * @param lc_name latency-critical framework name, like "repartition"
@@ -268,6 +269,7 @@ namespace chameleon {
 
                     LOG(INFO)<<model1.info();
                     LOG(INFO)<<model2.info();
+                    MILP::m_ILP_solution = true;
                 } else {
                     LOG(INFO)<< "Optimal solution not found.";
                 }

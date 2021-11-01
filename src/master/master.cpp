@@ -7147,9 +7147,6 @@ void Master::offer(
       //      m_lc_cpus,
       //                                                                                             m_lc_memory * 1024,
       //                                                                                             m_registered_framework_names);
-      vector<BTLinearModel> btl_models =
-        chameleon::mix_integer_linear_programming(
-          "repartition", 10, 10 * 1024, m_registered_framework_names);
 
       for (auto it = m_registered_framework_names.begin();
            it != m_registered_framework_names.end();
@@ -7160,7 +7157,7 @@ void Master::offer(
         const string& temp_name = *it;
         LOG(INFO) << " framework name is " << temp_name;
 
-        if (MILP::m_bt_lps.count(temp_name)) {
+        if (MILP::m_ILP_solution==true && MILP::m_bt_lps.count(temp_name)) {
           BTLinearModel btLinearModel = MILP::m_bt_lps.at(temp_name);
           //                auto temp_master_info =
           //                it->second.mutable_master_info();
@@ -7196,6 +7193,9 @@ void Master::offer(
         }
       }
 
+      if(m_registered_framework_names.empty()) {
+        MILP::m_ILP_solution = false;
+      }
 
 
       offer->mutable_allocation_info()->set_role(role);
@@ -7677,11 +7677,18 @@ void Master::addFramework(Framework* framework)
   // There should be no offered resources yet!
   CHECK_EQ(Resources(), framework->totalOfferedResources);
   LOG(INFO) << "lele framework is active ? " << framework->active();
-//  framework->state = Framework::State::INACTIVE;
+  framework->state = Framework::State::INACTIVE;
 
   // lele ILP
+  string temp_framework_name =  framework->info.name();
+
   chameleon::MILP::insert_new_lp_model(framework->info.name());
   m_registered_framework_names.push_back(framework->info.name());
+  using namespace  chameleon;
+  vector<BTLinearModel> btl_models =
+    chameleon::mix_integer_linear_programming(
+      "repartition", 10, 10 * 1024, m_registered_framework_names);
+
   framework->state = Framework::State::ACTIVE;
 
   allocator->addFramework(
