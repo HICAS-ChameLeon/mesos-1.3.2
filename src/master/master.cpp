@@ -7142,60 +7142,36 @@ void Master::offer(
       auto temp_reservation = temp_offered.reservations();
       offer->mutable_resources()->MergeFrom(offered);
       using namespace chameleon;
-      //      vector<BTLinearModel> btl_models =
-      //      chameleon::mix_integer_linear_programming("repartition",
-      //      m_lc_cpus,
-      //                                                                                             m_lc_memory * 1024,
-      //                                                                                             m_registered_framework_names);
+      LOG(INFO) << " framework name is " << framework->info.name();
+      if (MILP::m_ILP_solution==true && MILP::m_bt_lps.count(framework->info.name())) {
+        BTLinearModel btLinearModel = MILP::m_bt_lps.at(framework->info.name());
+        LOG(INFO) << "btLinearModel.reduced_executors is "
+                  << btLinearModel.reduced_executors;
 
-      for (auto it = m_registered_framework_names.begin();
-           it != m_registered_framework_names.end();
-           it++) {
-        //                  LOG(INFO) << " framework id is " << it->first;
-        //                  Framework *framework =
-        //                  frameworks.registered[it->first];
-        const string& temp_name = *it;
-        LOG(INFO) << " framework name is " << temp_name;
+        LOG(INFO) << "btLinearModel.reduced_per_mem is "
+                  << btLinearModel.reduced_per_mem;
+        auto temp_attributes = slave->info.attributes();
+        Attribute* attribute = temp_attributes.Add();
+        string attr_name = "lele_executor_mem";
+        attribute->set_name(attr_name);
+        //      attribute->set_allocated_name(&attr_name);
+        attribute->set_type(mesos::Value_Type_SCALAR);
+        attribute->mutable_scalar()->set_value(-btLinearModel.reduced_per_mem);
 
-        if (MILP::m_ILP_solution==true && MILP::m_bt_lps.count(temp_name)) {
-          BTLinearModel btLinearModel = MILP::m_bt_lps.at(temp_name);
-          //                auto temp_master_info =
-          //                it->second.mutable_master_info();
-          //
-          //                temp_master_info->set_scale_cpu(1);
-          LOG(INFO) << "btLinearModel.reduced_executors is "
-                    << btLinearModel.reduced_executors;
-          //                temp_master_info->set_executors_num_change(btLinearModel.reduced_executors);
-          LOG(INFO) << "btLinearModel.reduced_per_mem is "
-                    << btLinearModel.reduced_per_mem;
-          auto temp_attributes = slave->info.attributes();
-          Attribute* attribute = temp_attributes.Add();
-          string attr_name = "lele_mem";
-          attribute->set_name(attr_name);
-          //      attribute->set_allocated_name(&attr_name);
-          attribute->set_type(mesos::Value_Type_SCALAR);
-          attribute->mutable_scalar()->set_value(
-            -btLinearModel.reduced_per_mem);
-
-          Attribute* attribute_cpu = temp_attributes.Add();
-          string attr_cpus = "lele_cpus";
-          attribute_cpu->set_name(attr_cpus);
-          attribute_cpu->set_type(mesos::Value_Type_SCALAR);
-          attribute_cpu->mutable_scalar()->set_value(
-            -btLinearModel.reduced_executors);
-          offer->mutable_attributes()->MergeFrom(temp_attributes);
-
-          LOG(INFO) << " clear the registered messages";
-          it = m_registered_framework_names.erase(it);
-          it--;
-        } else {
+        Attribute* attribute_cpu = temp_attributes.Add();
+        string attr_cpus = "lele_executor_num_change";
+        attribute_cpu->set_name(attr_cpus);
+        attribute_cpu->set_type(mesos::Value_Type_SCALAR);
+        attribute_cpu->mutable_scalar()->set_value(
+          -btLinearModel.reduced_executors);
+        offer->mutable_attributes()->MergeFrom(temp_attributes);
+      }
+      else {
           LOG(INFO)<<"lele , do nothing because we do not have the model for the framework.";
-        }
       }
-
-      if(m_registered_framework_names.empty()) {
-        MILP::m_ILP_solution = false;
-      }
+        const string temp_name = framework->info.name();
+      LOG(INFO) << " clear the registered messages";
+      std::remove(m_registered_framework_names.begin(),m_registered_framework_names.end(),temp_name);
 
 
       offer->mutable_allocation_info()->set_role(role);
@@ -7676,47 +7652,85 @@ void Master::addFramework(Framework* framework)
 
   // There should be no offered resources yet!
   CHECK_EQ(Resources(), framework->totalOfferedResources);
-  LOG(INFO) << "lele framework is active ? " << framework->active();
-  framework->state = Framework::State::INACTIVE;
-
   // lele ILP
   string temp_framework_name =  framework->info.name();
+  if(temp_framework_name.find("LDA")!= std::string::npos || temp_framework_name.find("TeraSort")!= std::string::npos){
+    framework->state = Framework::State::INACTIVE;
+    chameleon::MILP::insert_new_lp_model(framework->info.name());
+    m_registered_framework_names.push_back(framework->info.name());
+    m_registered_fw_ids.insert({framework->info.name(),framework->id()});
+    using namespace  chameleon;
+    vector<BTLinearModel> btl_models =
+      chameleon::mix_integer_linear_programming(
+        "repartition", 30, 20 * 1024, m_registered_framework_names);
+    if(MILP::m_ILP_solution){
+      for(auto it = m_registered_fw_ids.begin();it!=m_registered_fw_ids.end();it++){
+        Framework* framework = frameworks.registered[it->second];
+        LOG(INFO)<<"lele Framework state to active "<<it->first;
+        LOG(INFO)<<"lele Framework state to active, framework id is: "<<it->second;
+        framework->state = Framework::State::ACTIVE;
+        allocator->addFramework(
+          framework->id(),
+          framework->info,
+          framework->usedResources,
+          framework->active());
+        Option<string> principal = framework->info.has_principal()
+                                   ? Option<string>(framework->info.principal())
+                                   : None();
 
-  chameleon::MILP::insert_new_lp_model(framework->info.name());
-  m_registered_framework_names.push_back(framework->info.name());
-  using namespace  chameleon;
-  vector<BTLinearModel> btl_models =
-    chameleon::mix_integer_linear_programming(
-      "repartition", 10, 10 * 1024, m_registered_framework_names);
+        if (framework->pid.isSome()) {
+          CHECK(!frameworks.principals.contains(framework->pid.get()));
+          frameworks.principals.put(framework->pid.get(), principal);
+        }
 
-  framework->state = Framework::State::ACTIVE;
+        if (principal.isSome()) {
+          // Create new framework metrics if this framework is the first
+          // one of this principal. Otherwise existing metrics are reused.
+          if (!metrics->frameworks.contains(principal.get())) {
+            metrics->frameworks.put(
+              principal.get(),
+              Owned<Metrics::Frameworks>(new Metrics::Frameworks(principal.get())));
+          }
+        }
+      }
+//      MILP::m_ILP_solution=false;
+      m_registered_fw_ids.clear();
+    }
 
-  allocator->addFramework(
-    framework->id(),
-    framework->info,
-    framework->usedResources,
-    framework->active());
+  }else{
+    framework->state = Framework::State::ACTIVE;
+    allocator->addFramework(
+      framework->id(),
+      framework->info,
+      framework->usedResources,
+      framework->active());
 
-  // Export framework metrics if a principal is specified in `FrameworkInfo`.
+    // Export framework metrics if a principal is specified in `FrameworkInfo`.
 
-  Option<string> principal = framework->info.has_principal()
+    Option<string> principal = framework->info.has_principal()
                                ? Option<string>(framework->info.principal())
                                : None();
 
-  if (framework->pid.isSome()) {
-    CHECK(!frameworks.principals.contains(framework->pid.get()));
-    frameworks.principals.put(framework->pid.get(), principal);
-  }
+    if (framework->pid.isSome()) {
+      CHECK(!frameworks.principals.contains(framework->pid.get()));
+      frameworks.principals.put(framework->pid.get(), principal);
+    }
 
-  if (principal.isSome()) {
-    // Create new framework metrics if this framework is the first
-    // one of this principal. Otherwise existing metrics are reused.
-    if (!metrics->frameworks.contains(principal.get())) {
-      metrics->frameworks.put(
-        principal.get(),
-        Owned<Metrics::Frameworks>(new Metrics::Frameworks(principal.get())));
+    if (principal.isSome()) {
+      // Create new framework metrics if this framework is the first
+      // one of this principal. Otherwise existing metrics are reused.
+      if (!metrics->frameworks.contains(principal.get())) {
+        metrics->frameworks.put(
+          principal.get(),
+          Owned<Metrics::Frameworks>(new Metrics::Frameworks(principal.get())));
+      }
     }
   }
+
+
+
+
+
 }
 
 

@@ -1798,6 +1798,7 @@ private:
     Option<process::Owned<BoundedRateLimiter>> defaultLimiter;
   } frameworks;
   std::vector<std::string> m_registered_framework_names;
+  std::unordered_map<std::string, FrameworkID> m_registered_fw_ids;
   struct Subscribers
   {
     // Represents a client subscribed to the 'api/vX' endpoint.
