@@ -1797,8 +1797,15 @@ private:
     // 'flags.rate_limits'.
     Option<process::Owned<BoundedRateLimiter>> defaultLimiter;
   } frameworks;
+   // lele ILP
   std::vector<std::string> m_registered_framework_names;
   std::unordered_map<std::string, FrameworkID> m_registered_fw_ids;
+  // squeezing resource from best-tuned jobs to latency-sensitive applications
+  int m_lc_cpus;
+  int m_lc_memory;
+  int m_left_cpus;
+  int m_left_memory_GB;
+  Framework* m_marathon_fm;
   struct Subscribers
   {
     // Represents a client subscribed to the 'api/vX' endpoint.

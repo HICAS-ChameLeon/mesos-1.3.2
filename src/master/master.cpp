@@ -335,6 +335,12 @@ Master::Master(
   info_.mutable_address()->set_ip(stringify(self().address.ip));
   info_.mutable_address()->set_port(self().address.port);
   info_.mutable_address()->set_hostname(hostname);
+
+  this->m_lc_cpus =30;
+  this->m_lc_memory = 40;
+  this->m_left_cpus = 0;
+  this->m_left_memory_GB =0;
+  this->m_marathon_fm = nullptr;
 }
 
 
@@ -3729,7 +3735,7 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
           allocationInfo = offer->allocation_info();
           offeredResources += offer->resources();
         }
-
+        LOG(INFO)<<"lele offer->framework_id is :"<<offer->framework_id();
         removeOffer(offer);
         continue;
       }
@@ -3774,6 +3780,7 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
       }();
 
       foreach (const TaskInfo& task, tasks) {
+
         const StatusUpdate& update = protobuf::createStatusUpdate(
           framework->id(),
           task.slave_id(),
@@ -3837,6 +3844,10 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
         // Authorize the tasks. A task is in 'framework->pendingTasks'
         // and 'slave->pendingTasks' before it is authorized.
         foreach (const TaskInfo& task, tasks) {
+          LOG(INFO)<<"lele task.command() is : "<<task.command();
+          LOG(INFO)<<"lele task.executor().name() is "<<task.executor().name();
+          LOG(INFO)<<"lele task.slave_id() is "<<task.slave_id();
+          LOG(INFO)<<"lele task.resources().size() is "<<task.resources().size();
           futures.push_back(authorizeTask(task, framework));
 
           // Add to the framework's list of pending tasks.
@@ -6864,7 +6875,7 @@ void Master::_reconcileTasks(
         None(),
         protobuf::getTaskContainerStatus(*task));
 
-      VLOG(1) << "Sending implicit reconciliation state "
+      LOG(INFO) << "lele Sending implicit reconciliation state "
               << update.status().state() << " for task "
               << update.status().task_id() << " of framework " << *framework;
 
@@ -7662,8 +7673,10 @@ void Master::addFramework(Framework* framework)
     using namespace  chameleon;
     vector<BTLinearModel> btl_models =
       chameleon::mix_integer_linear_programming(
-        "repartition", 30, 20 * 1024, m_registered_framework_names);
+        "repartition", this->m_lc_cpus, this->m_lc_memory * 1024, m_registered_framework_names);
     if(MILP::m_ILP_solution){
+      this->m_left_cpus = this->m_lc_cpus;
+      this->m_left_memory_GB = this->m_lc_memory;
       for(auto it = m_registered_fw_ids.begin();it!=m_registered_fw_ids.end();it++){
         Framework* framework = frameworks.registered[it->second];
         LOG(INFO)<<"lele Framework state to active "<<it->first;
@@ -7695,9 +7708,24 @@ void Master::addFramework(Framework* framework)
       }
 //      MILP::m_ILP_solution=false;
       m_registered_fw_ids.clear();
+
+      // begins to stead resources from BT jobs to latency-critical applications
+      if(m_marathon_fm != nullptr){
+        foreachvalue (Task* task, m_marathon_fm->tasks) {
+          LOG(INFO)<<"lele task id "<<task->task_id();
+          LOG(INFO)<<"lele task name, state "<<task->name()<<", "<<task->state();
+          LOG(INFO)<<"lele the corresponding slaveID of the task "<<task->slave_id();
+          LOG(INFO)<<"lele resource of the task"<<task->resources();
+          LOG(INFO)<<"lele task container info "<<task->container();
+        }
+      }
+
     }
 
   }else{
+    if(temp_framework_name.find("marathon")!= std::string::npos){
+      m_marathon_fm = framework;
+    }
     framework->state = Framework::State::ACTIVE;
     allocator->addFramework(
       framework->id(),
