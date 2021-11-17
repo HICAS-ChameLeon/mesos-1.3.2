@@ -191,6 +191,10 @@ public:
   void updateFramework(
       const UpdateFrameworkMessage& message);
 
+  void docker_resource_update(const process::UPID & from, const DockerUpdateMessage & message);
+
+  Nothing docker_resource_update_cpu_mem(const std::string& container_id,const std::string& cpus, const std::string& mem);
+
   void checkpointResources(const std::vector<Resource>& checkpointedResources);
 
   void subscribe(

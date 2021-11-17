@@ -336,10 +336,10 @@ Master::Master(
   info_.mutable_address()->set_port(self().address.port);
   info_.mutable_address()->set_hostname(hostname);
 
-  this->m_lc_cpus =30;
+  this->m_lc_cpus = 30;
   this->m_lc_memory = 40;
   this->m_left_cpus = 0;
-  this->m_left_memory_GB =0;
+  this->m_left_memory_GB = 0;
   this->m_marathon_fm = nullptr;
 }
 
@@ -3735,7 +3735,7 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
           allocationInfo = offer->allocation_info();
           offeredResources += offer->resources();
         }
-        LOG(INFO)<<"lele offer->framework_id is :"<<offer->framework_id();
+        LOG(INFO) << "lele offer->framework_id is :" << offer->framework_id();
         removeOffer(offer);
         continue;
       }
@@ -3780,7 +3780,6 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
       }();
 
       foreach (const TaskInfo& task, tasks) {
-
         const StatusUpdate& update = protobuf::createStatusUpdate(
           framework->id(),
           task.slave_id(),
@@ -3844,10 +3843,12 @@ void Master::accept(Framework* framework, scheduler::Call::Accept accept)
         // Authorize the tasks. A task is in 'framework->pendingTasks'
         // and 'slave->pendingTasks' before it is authorized.
         foreach (const TaskInfo& task, tasks) {
-          LOG(INFO)<<"lele task.command() is : "<<task.command();
-          LOG(INFO)<<"lele task.executor().name() is "<<task.executor().name();
-          LOG(INFO)<<"lele task.slave_id() is "<<task.slave_id();
-          LOG(INFO)<<"lele task.resources().size() is "<<task.resources().size();
+          LOG(INFO) << "lele task.command() is : " << task.command();
+          LOG(INFO) << "lele task.executor().name() is "
+                    << task.executor().name();
+          LOG(INFO) << "lele task.slave_id() is " << task.slave_id();
+          LOG(INFO) << "lele task.resources().size() is "
+                    << task.resources().size();
           futures.push_back(authorizeTask(task, framework));
 
           // Add to the framework's list of pending tasks.
@@ -6876,8 +6877,8 @@ void Master::_reconcileTasks(
         protobuf::getTaskContainerStatus(*task));
 
       LOG(INFO) << "lele Sending implicit reconciliation state "
-              << update.status().state() << " for task "
-              << update.status().task_id() << " of framework " << *framework;
+                << update.status().state() << " for task "
+                << update.status().task_id() << " of framework " << *framework;
 
       // TODO(bmahler): Consider using forward(); might lead to too
       // much logging.
@@ -7154,7 +7155,9 @@ void Master::offer(
       offer->mutable_resources()->MergeFrom(offered);
       using namespace chameleon;
       LOG(INFO) << " framework name is " << framework->info.name();
-      if (MILP::m_ILP_solution==true && MILP::m_bt_lps.count(framework->info.name())) {
+      if (
+        MILP::m_ILP_solution == true &&
+        MILP::m_bt_lps.count(framework->info.name())) {
         BTLinearModel btLinearModel = MILP::m_bt_lps.at(framework->info.name());
         LOG(INFO) << "btLinearModel.reduced_executors is "
                   << btLinearModel.reduced_executors;
@@ -7176,13 +7179,16 @@ void Master::offer(
         attribute_cpu->mutable_scalar()->set_value(
           -btLinearModel.reduced_executors);
         offer->mutable_attributes()->MergeFrom(temp_attributes);
+      } else {
+        LOG(INFO) << "lele , do nothing because we do not have the model for "
+                     "the framework.";
       }
-      else {
-          LOG(INFO)<<"lele , do nothing because we do not have the model for the framework.";
-      }
-        const string temp_name = framework->info.name();
+      const string temp_name = framework->info.name();
       LOG(INFO) << " clear the registered messages";
-      std::remove(m_registered_framework_names.begin(),m_registered_framework_names.end(),temp_name);
+      std::remove(
+        m_registered_framework_names.begin(),
+        m_registered_framework_names.end(),
+        temp_name);
 
 
       offer->mutable_allocation_info()->set_role(role);
@@ -7640,6 +7646,13 @@ void Master::reconcileKnownSlave(
 }
 
 
+inline void num2string(double num, string& str)
+{
+  std::stringstream ss;
+  ss << num;
+  str = ss.str();
+}
+
 void Master::addFramework(Framework* framework)
 {
   CHECK_NOTNULL(framework);
@@ -7664,32 +7677,41 @@ void Master::addFramework(Framework* framework)
   // There should be no offered resources yet!
   CHECK_EQ(Resources(), framework->totalOfferedResources);
   // lele ILP
-  string temp_framework_name =  framework->info.name();
-  if(temp_framework_name.find("LDA")!= std::string::npos || temp_framework_name.find("TeraSort")!= std::string::npos){
+  string temp_framework_name = framework->info.name();
+  if (
+    temp_framework_name.find("LDA") != std::string::npos ||
+    temp_framework_name.find("TeraSort") != std::string::npos) {
     framework->state = Framework::State::INACTIVE;
     chameleon::MILP::insert_new_lp_model(framework->info.name());
     m_registered_framework_names.push_back(framework->info.name());
-    m_registered_fw_ids.insert({framework->info.name(),framework->id()});
-    using namespace  chameleon;
+    m_registered_fw_ids.insert({framework->info.name(), framework->id()});
+    using namespace chameleon;
     vector<BTLinearModel> btl_models =
       chameleon::mix_integer_linear_programming(
-        "repartition", this->m_lc_cpus, this->m_lc_memory * 1024, m_registered_framework_names);
-    if(MILP::m_ILP_solution){
+        "repartition",
+        this->m_lc_cpus,
+        this->m_lc_memory * 1024,
+        m_registered_framework_names);
+    if (MILP::m_ILP_solution) {
       this->m_left_cpus = this->m_lc_cpus;
       this->m_left_memory_GB = this->m_lc_memory;
-      for(auto it = m_registered_fw_ids.begin();it!=m_registered_fw_ids.end();it++){
+      for (auto it = m_registered_fw_ids.begin();
+           it != m_registered_fw_ids.end();
+           it++) {
         Framework* framework = frameworks.registered[it->second];
-        LOG(INFO)<<"lele Framework state to active "<<it->first;
-        LOG(INFO)<<"lele Framework state to active, framework id is: "<<it->second;
+        LOG(INFO) << "lele Framework state to active " << it->first;
+        LOG(INFO) << "lele Framework state to active, framework id is: "
+                  << it->second;
         framework->state = Framework::State::ACTIVE;
         allocator->addFramework(
           framework->id(),
           framework->info,
           framework->usedResources,
           framework->active());
-        Option<string> principal = framework->info.has_principal()
-                                   ? Option<string>(framework->info.principal())
-                                   : None();
+        Option<string> principal =
+          framework->info.has_principal()
+            ? Option<string>(framework->info.principal())
+            : None();
 
         if (framework->pid.isSome()) {
           CHECK(!frameworks.principals.contains(framework->pid.get()));
@@ -7702,28 +7724,74 @@ void Master::addFramework(Framework* framework)
           if (!metrics->frameworks.contains(principal.get())) {
             metrics->frameworks.put(
               principal.get(),
-              Owned<Metrics::Frameworks>(new Metrics::Frameworks(principal.get())));
+              Owned<Metrics::Frameworks>(
+                new Metrics::Frameworks(principal.get())));
           }
         }
       }
-//      MILP::m_ILP_solution=false;
+      //      MILP::m_ILP_solution=false;
       m_registered_fw_ids.clear();
 
       // begins to stead resources from BT jobs to latency-critical applications
-      if(m_marathon_fm != nullptr){
+      if (m_marathon_fm != nullptr) {
         foreachvalue (Task* task, m_marathon_fm->tasks) {
-          LOG(INFO)<<"lele task id "<<task->task_id();
-          LOG(INFO)<<"lele task name, state "<<task->name()<<", "<<task->state();
-          LOG(INFO)<<"lele the corresponding slaveID of the task "<<task->slave_id();
-          LOG(INFO)<<"lele resource of the task"<<task->resources();
-          LOG(INFO)<<"lele task container info "<<task->container();
+          if (this->m_left_cpus <= 2 && this->m_left_memory_GB <= 2) continue;
+          LOG(INFO) << "lele task id " << task->task_id();
+          LOG(INFO) << "lele task name, state " << task->name() << ", "
+                    << task->state();
+          LOG(INFO) << "lele the corresponding slaveID of the task "
+                    << task->slave_id();
+          LOG(INFO) << "lele resource of the task" << task->resources();
+          LOG(INFO) << "lele task container info " << task->container();
+          if (task->container().has_docker()) {
+            DockerUpdateMessage* dockerUpdateMessage =
+              new DockerUpdateMessage();
+            dockerUpdateMessage->set_docker_name(
+              task->container().docker().image());
+            dockerUpdateMessage->set_run_docker_slave_id(
+              task->slave_id().value());
+            //          task->resources().Get(0).name();
+            double origin_cpus = 0, origin_mem = 0;
+            for (auto it = task->resources().begin();
+                 it != task->resources().end();
+                 it++) {
+              LOG(INFO) << it->name();
+              if (it->name() == "cpus") {
+                LOG(INFO) << it->scalar().value();
+                origin_cpus = it->scalar().value();
+              } else if (it->name() == "mem") {
+                LOG(INFO) << it->scalar().value();
+                origin_mem = it->scalar().value();
+              }
+            }
+            LOG(INFO) << " increase the resource of task " << task->name()
+                      << "by 2 cores and 2 G ";
+            origin_cpus += 2;
+            origin_mem += 2 * 1024;
+            this->m_left_cpus -= 2;
+            this->m_left_memory_GB -= 2;
+            LOG(INFO) << "after squeezing resource for the docker "
+                         "application,m_left_cpus is "
+                      << this->m_left_cpus;
+            LOG(INFO) << "after squeezing resource for the docker "
+                         "application,m_left_memory_GB is "
+                      << this->m_left_memory_GB;
+            string increased_cpus, increased_mem;
+            num2string(origin_cpus, increased_cpus);
+            num2string(origin_mem, increased_mem);
+            dockerUpdateMessage->set_docker_mem(increased_mem + "M");
+            dockerUpdateMessage->set_docker_cpus(increased_cpus);
+            UPID temp_slave = slaves.registered.get(task->slave_id())->pid;
+            send(temp_slave, *dockerUpdateMessage);
+            LOG(INFO) << "send docker update message to slave " << temp_slave;
+            delete dockerUpdateMessage;
+          }
         }
       }
-
     }
 
-  }else{
-    if(temp_framework_name.find("marathon")!= std::string::npos){
+  } else {
+    if (temp_framework_name.find("marathon") != std::string::npos) {
       m_marathon_fm = framework;
     }
     framework->state = Framework::State::ACTIVE;
@@ -7736,8 +7804,8 @@ void Master::addFramework(Framework* framework)
     // Export framework metrics if a principal is specified in `FrameworkInfo`.
 
     Option<string> principal = framework->info.has_principal()
-                               ? Option<string>(framework->info.principal())
-                               : None();
+                                 ? Option<string>(framework->info.principal())
+                                 : None();
 
     if (framework->pid.isSome()) {
       CHECK(!frameworks.principals.contains(framework->pid.get()));
@@ -7754,11 +7822,6 @@ void Master::addFramework(Framework* framework)
       }
     }
   }
-
-
-
-
-
 }
 
 

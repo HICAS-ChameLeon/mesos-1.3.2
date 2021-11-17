@@ -727,3 +727,12 @@ message TaskHealthStatus {
 message HookExecuted {
   optional string module = 1;
 }
+
+// lele message to update docker
+message DockerUpdateMessage{
+  optional string run_docker_slave_id = 1 ;
+  optional string docker_name = 2 ;
+  optional string docker_cpus = 3 ;
+  optional string docker_mem = 4;
+
+}

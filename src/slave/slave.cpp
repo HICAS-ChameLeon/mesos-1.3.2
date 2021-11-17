@@ -47,6 +47,8 @@
 #include <process/loop.hpp>
 #include <process/reap.hpp>
 #include <process/time.hpp>
+#include <process/io.hpp>
+
 
 #include <stout/bytes.hpp>
 #include <stout/check.hpp>
@@ -64,7 +66,6 @@
 #include <stout/try.hpp>
 #include <stout/uuid.hpp>
 #include <stout/utils.hpp>
-
 #include "authentication/cram_md5/authenticatee.hpp"
 
 #ifdef USE_SSL_SOCKET
@@ -102,6 +103,7 @@
 #else
 // Used to install a handler for POSIX signal.
 // http://pubs.opengroup.org/onlinepubs/009695399/functions/sigaction.html
+#include <process/io.hpp>
 #include <slave/posix_signalhandler.hpp>
 #endif // __WINDOWS__
 
@@ -145,7 +147,6 @@ using process::Owned;
 using process::PID;
 using process::Time;
 using process::UPID;
-
 using process::http::authentication::Principal;
 
 #ifdef __WINDOWS__
@@ -649,6 +650,7 @@ void Slave::initialize()
       &Slave::ping,
       &PingSlaveMessage::connected);
 
+  install<DockerUpdateMessage>(&Slave::docker_resource_update);
   // Setup the '/api/v1' handler for streaming requests.
   RouteOptions options;
   options.requestStreaming = true;
@@ -2748,6 +2750,53 @@ void Slave::launchExecutor(
   return;
 }
 
+void Slave::docker_resource_update(const process::UPID & from, const DockerUpdateMessage & message){
+  LOG(INFO)<<"docker_resource_update ";
+  LOG(INFO)<<"docker update message: "<<message.docker_name() <<" "<<message.docker_cpus() <<" "<<message.docker_mem();
+
+  const string containerID =  "docker ps | grep "+message.docker_name() +" | cut -d' ' -f 1";
+
+  LOG(INFO)<< "docker update cmd is : "<<containerID;
+  Try<process::Subprocess> s = subprocess(
+    containerID,
+    process::Subprocess::PATH(os::DEV_NULL),
+    process::Subprocess::PIPE(),
+    process::Subprocess::PIPE());
+
+  if (s.isError()) {
+    LOG(WARNING)<<"failed to get container ID "<<containerID;
+  }
+
+  // Start reading from stdout so writing to the pipe won't block
+  // to handle cases where the output is larger than the pipe
+  // capacity.
+  const Future<string> containerID_future = process::io::read(s.get().out().get());
+  LOG(INFO)<<"get containerID "<<containerID_future.get();
+    containerID_future.then(defer(self(), &Self::docker_resource_update_cpu_mem, containerID_future.get(),message.docker_cpus() ,message.docker_mem() ));
+}
+
+Nothing Slave::docker_resource_update_cpu_mem(const std::string& container_id,const std::string& cpus, const std::string& mem)
+{
+  const string cmd =  " docker update --cpus "+ cpus + " -m "+mem + " --memory-swap "+ mem +" " +container_id ;
+  LOG(INFO)<< "docker update cmd is : "<<cmd;
+  Try<process::Subprocess> s = subprocess(
+    cmd,
+    process::Subprocess::PATH(os::DEV_NULL),
+    process::Subprocess::PIPE(),
+    process::Subprocess::PIPE());
+
+  if (s.isError()) {
+    LOG(ERROR)<<"failed to updated container ID "<<container_id;
+  }
+
+  // Start reading from stdout so writing to the pipe won't block
+  // to handle cases where the output is larger than the pipe
+  // capacity.
+  const Future<string> output = process::io::read(s.get().out().get());
+  LOG(INFO)<<"updated the docker container successfully "<<output.get();
+
+  return Nothing();
+}
 
 void Slave::runTaskGroup(
     const UPID& from,
