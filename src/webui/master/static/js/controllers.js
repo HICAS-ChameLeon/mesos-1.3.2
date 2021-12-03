@@ -468,7 +468,7 @@
   }]);
 
 
-  mesosApp.controller('HomeCtrl', function($dialog, $scope) {
+  mesosApp.controller('HomeCtrl', function($dialog, $scope,$http, $timeout) {
     $scope.log = function($event) {
       if (!$scope.state.external_log_file && !$scope.state.log_dir) {
         $dialog.messageBox(
@@ -482,6 +482,31 @@
             '/master/log',
             'Mesos Master');
       }
+    };
+
+    $scope.lc_cpus = 30;
+    $scope.lc_memory= 40;
+    var leadingMesosMasterURL = function (path) {
+      var address = location.hostname + ':' + '5050';
+      return '//' + address + path;
+
+    };
+    $scope.lc_resources= function (lc_cpus, lc_memory) {
+      console.log("lele lc_resource");
+      $http({
+        method: 'POST',
+        url: leadingMesosMasterURL('/master/lc_resources/post'),
+        data: {
+          lc_cpus: lc_cpus,
+          lc_memory: lc_memory
+        },
+        headers: {'Content-Type': 'application/json'}
+      }).then(function successCallback(response) {
+
+        console.log(response);
+      }, function errorCallback(response) {
+        // 请求失败执行代码
+      });
     };
   });
 

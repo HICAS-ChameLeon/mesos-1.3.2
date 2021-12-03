@@ -1123,6 +1123,30 @@ void Master::initialize()
       return http.weights(request, principal);
     });
 
+  // http://slave0:5050/master/lc_resources/post
+  route(
+    "/lc_resources/post",
+    "squeezing resources from BT jobs to LC applications ",
+    [this](process::http::Request request) {
+      JSON::Object result = JSON::Object();
+      JSON::Object request_json = JSON::parse<JSON::Object>(request.body).get();
+      LOG(INFO) << stringify(request_json);
+      JSON::Value lc_cpus = request_json.values["lc_cpus"];
+      JSON::Value lc_memory = request_json.values["lc_memory"];
+      const string lc_cpus_str = strings::remove(stringify(lc_cpus), "\"");
+      const string lc_memory_str = strings::remove(stringify(lc_memory), "\"");
+      LOG(INFO) << lc_cpus_str;
+      m_lc_cpus = std::atoi(lc_cpus_str.c_str());
+      m_lc_memory = std::atoi(lc_memory_str.c_str());
+      LOG(INFO) << " the m_lc_cpus is " << m_lc_cpus;
+      LOG(INFO) << " the m_lc_memory is " << m_lc_memory;
+
+
+      process::http::OK ok_response(stringify(result));
+      ok_response.headers.insert({"Access-Control-Allow-Origin", "*"});
+      return ok_response;
+    });
+
   // Provide HTTP assets from a "webui" directory. This is either
   // specified via flags (which is necessary for running out of the
   // build directory before 'make install') or determined at build
@@ -7735,7 +7759,7 @@ void Master::addFramework(Framework* framework)
       // begins to stead resources from BT jobs to latency-critical applications
       if (m_marathon_fm != nullptr) {
         foreachvalue (Task* task, m_marathon_fm->tasks) {
-          if (this->m_left_cpus <= 2 && this->m_left_memory_GB <= 2) continue;
+          if (this->m_left_cpus <= 4 && this->m_left_memory_GB <= 2) continue;
           LOG(INFO) << "lele task id " << task->task_id();
           LOG(INFO) << "lele task name, state " << task->name() << ", "
                     << task->state();
@@ -7765,10 +7789,10 @@ void Master::addFramework(Framework* framework)
               }
             }
             LOG(INFO) << " increase the resource of task " << task->name()
-                      << "by 2 cores and 2 G ";
-            origin_cpus += 2;
+                      << "by 4 cores and 2 G ";
+            origin_cpus += 4;
             origin_mem += 2 * 1024;
-            this->m_left_cpus -= 2;
+            this->m_left_cpus -= 4;
             this->m_left_memory_GB -= 2;
             LOG(INFO) << "after squeezing resource for the docker "
                          "application,m_left_cpus is "

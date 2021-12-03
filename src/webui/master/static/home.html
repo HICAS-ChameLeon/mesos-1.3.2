@@ -46,7 +46,37 @@
       </dl>
 
       <p><a href="" ng-click="log($event)">LOG</a></p>
-
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>标签名称</th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>
+          <p class="text-info"><h4>Eating up Resource</h4></p>
+        </td>
+        <td>
+<!--          <div class="col-lg-2">-->
+            <div class="input-group">
+              <span class="input-group-addon">CPUs</span>
+              <input type="text" class="form-control" ng-model="lc_cpus" placeholder="30" required="required">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Memory (G)</span>
+              <input type="text" class="form-control" ng-model="lc_memory" placeholder="40" required="required">
+            </div>
+<!--          </div>-->
+          <button type="button" class="btn btn-primary" ng-click="lc_resources(lc_cpus, lc_memory)">Squeezing</button>
+          <p>{{lc_cpus}}</p>
+          <p>{{lc_memory}}</p>
+        </td>
+        </tr>
+        </tbody>
+      </table>
       <h4>Agents</h4>
       <table class="table table-condensed">
         <tbody>
