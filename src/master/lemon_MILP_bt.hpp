@@ -118,60 +118,115 @@ namespace chameleon {
           } else {
             std::cout << "Optimal solution not found." << std::endl;
           }
+            // large input datasets
+          if(name.find("LDA")!= std::string::npos){
+            if(m_bt_lps.count("LDA")==0){
+              BTLinearModel lda("LDA",-3.79712601e-03,-6.59352184e-06,0.05952716033460187);
+              lda.cores_max = 156;
+              lda.per_executor_cores =  5;
+              lda.per_executor_memory = 2795;
+              lda.overall_executors = lda.cores_max / lda.per_executor_cores;
+              lda.lower_bound_reduced_cores = lda.per_executor_cores *2;
+              lda.lower_bound_reduced_mem = lda.per_executor_memory *2;
 
-            if(name.find("LDA")!= std::string::npos){
-                if(m_bt_lps.count("LDA")==0){
-                    BTLinearModel lda("LDA",2.32329538e-02,1.85709874e-05,-0.4778566673203253);
-                    lda.cores_max = 156;
-                    lda.per_executor_cores =  5;
-                    lda.per_executor_memory = 2795;
-                    lda.overall_executors = lda.cores_max / lda.per_executor_cores;
-                    lda.lower_bound_reduced_cores = lda.per_executor_cores *2;
-                    lda.lower_bound_reduced_mem = lda.per_executor_memory *2;
-
-                    m_bt_lps.insert({name, lda});
-                    LOG(INFO)<<"insert a model named "<<name;
-                }
-            }else if(name.find("TeraSort")!= std::string::npos){
-                if(m_bt_lps.count(name)==0){
-                    BTLinearModel terasort("TeraSort",-0.0238,0.00016533,0.09906666666666664);
-                    terasort.cores_max = 128;
-                    terasort.per_executor_cores = 9;
-                    terasort.per_executor_memory = 6561;
-                    terasort.overall_executors = terasort.cores_max / terasort.per_executor_cores;
-                    terasort.lower_bound_reduced_cores = terasort.per_executor_cores *2;
-                    terasort.lower_bound_reduced_mem = terasort.per_executor_memory *2;
-                    m_bt_lps.insert({name, terasort});
-                    LOG(INFO)<<"insert a model named "<<name;
-
-                }
-            }else if(name.find("Gradient")!= std::string::npos){
-                if(m_bt_lps.count(name)==0){
-                    BTLinearModel gbt("GBT",-6.15300123e-03,1.79400630e-06,0.1331771159919384);
-                    gbt.cores_max = 161;
-                    gbt.per_executor_cores = 4;
-                    gbt.per_executor_memory = 1563;
-                    gbt.overall_executors = gbt.cores_max / gbt.per_executor_cores;
-                    gbt.lower_bound_reduced_cores = gbt.per_executor_cores *2;
-                    gbt.lower_bound_reduced_mem = gbt.per_executor_memory *2;
-                    m_bt_lps.insert({name, gbt});
-                    LOG(INFO)<<"insert a model named "<<name;
-
-                }
-            }else if(name.find("ALS")!= std::string::npos){
-                if(m_bt_lps.count(name)==0){
-                    BTLinearModel als("ALS",-1.48646513e-02,-8.91943875e-07,0.2490425115114014);
-                    als.cores_max = 178;
-                    als.per_executor_cores = 2;
-                    als.per_executor_memory = 1384;
-                    als.overall_executors = als.cores_max / als.per_executor_cores;
-                    als.lower_bound_reduced_cores = als.per_executor_cores *2;
-                    als.lower_bound_reduced_mem = als.per_executor_memory *2;
-                    m_bt_lps.insert({name, als});
-                    LOG(INFO)<<"insert a model named "<<name;
-
-                }
+              m_bt_lps.insert({name, lda});
+              LOG(INFO)<<"insert a model named "<<name;
             }
+          }else if(name.find("TeraSort")!= std::string::npos){
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel terasort("TeraSort",-0.14457721,0.00019771,0.022838498050515695);
+              terasort.cores_max = 128;
+              terasort.per_executor_cores = 9;
+              terasort.per_executor_memory = 6561;
+              terasort.overall_executors = terasort.cores_max / terasort.per_executor_cores;
+              terasort.lower_bound_reduced_cores = terasort.per_executor_cores *2;
+              terasort.lower_bound_reduced_mem = terasort.per_executor_memory *2;
+              m_bt_lps.insert({name, terasort});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("Gradient")!= std::string::npos){
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel gbt("GBT",-6.15300123e-03,1.79400630e-06,0.1331771159919384);
+              gbt.cores_max = 161;
+              gbt.per_executor_cores = 4;
+              gbt.per_executor_memory = 1563;
+              gbt.overall_executors = gbt.cores_max / gbt.per_executor_cores;
+              gbt.lower_bound_reduced_cores = gbt.per_executor_cores *2;
+              gbt.lower_bound_reduced_mem = gbt.per_executor_memory *2;
+              m_bt_lps.insert({name, gbt});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("ALS")!= std::string::npos){
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel als("ALS",-1.48646513e-02,-8.91943875e-07,0.2490425115114014);
+              als.cores_max = 178;
+              als.per_executor_cores = 2;
+              als.per_executor_memory = 1384;
+              als.overall_executors = als.cores_max / als.per_executor_cores;
+              als.lower_bound_reduced_cores = als.per_executor_cores *2;
+              als.lower_bound_reduced_mem = als.per_executor_memory *2;
+              m_bt_lps.insert({name, als});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }
+
+           // huge input datasets
+//            if(name.find("LDA")!= std::string::npos){
+//                if(m_bt_lps.count("LDA")==0){
+//                    BTLinearModel lda("LDA",2.32329538e-02,1.85709874e-05,-0.4778566673203253);
+//                    lda.cores_max = 156;
+//                    lda.per_executor_cores =  5;
+//                    lda.per_executor_memory = 2795;
+//                    lda.overall_executors = lda.cores_max / lda.per_executor_cores;
+//                    lda.lower_bound_reduced_cores = lda.per_executor_cores *2;
+//                    lda.lower_bound_reduced_mem = lda.per_executor_memory *2;
+//
+//                    m_bt_lps.insert({name, lda});
+//                    LOG(INFO)<<"insert a model named "<<name;
+//                }
+//            }else if(name.find("TeraSort")!= std::string::npos){
+//                if(m_bt_lps.count(name)==0){
+//                    BTLinearModel terasort("TeraSort",-0.0238,0.00016533,0.09906666666666664);
+//                    terasort.cores_max = 128;
+//                    terasort.per_executor_cores = 9;
+//                    terasort.per_executor_memory = 6561;
+//                    terasort.overall_executors = terasort.cores_max / terasort.per_executor_cores;
+//                    terasort.lower_bound_reduced_cores = terasort.per_executor_cores *2;
+//                    terasort.lower_bound_reduced_mem = terasort.per_executor_memory *2;
+//                    m_bt_lps.insert({name, terasort});
+//                    LOG(INFO)<<"insert a model named "<<name;
+//
+//                }
+//            }else if(name.find("Gradient")!= std::string::npos){
+//                if(m_bt_lps.count(name)==0){
+//                    BTLinearModel gbt("GBT",-6.15300123e-03,1.79400630e-06,0.1331771159919384);
+//                    gbt.cores_max = 161;
+//                    gbt.per_executor_cores = 4;
+//                    gbt.per_executor_memory = 1563;
+//                    gbt.overall_executors = gbt.cores_max / gbt.per_executor_cores;
+//                    gbt.lower_bound_reduced_cores = gbt.per_executor_cores *2;
+//                    gbt.lower_bound_reduced_mem = gbt.per_executor_memory *2;
+//                    m_bt_lps.insert({name, gbt});
+//                    LOG(INFO)<<"insert a model named "<<name;
+//
+//                }
+//            }else if(name.find("ALS")!= std::string::npos){
+//                if(m_bt_lps.count(name)==0){
+//                    BTLinearModel als("ALS",-1.48646513e-02,-8.91943875e-07,0.2490425115114014);
+//                    als.cores_max = 178;
+//                    als.per_executor_cores = 2;
+//                    als.per_executor_memory = 1384;
+//                    als.overall_executors = als.cores_max / als.per_executor_cores;
+//                    als.lower_bound_reduced_cores = als.per_executor_cores *2;
+//                    als.lower_bound_reduced_mem = als.per_executor_memory *2;
+//                    m_bt_lps.insert({name, als});
+//                    LOG(INFO)<<"insert a model named "<<name;
+//
+//                }
+//            }
 
         }
 
