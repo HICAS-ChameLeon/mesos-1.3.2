@@ -126,8 +126,8 @@ namespace chameleon {
               lda.per_executor_cores =  5;
               lda.per_executor_memory = 2795;
               lda.overall_executors = lda.cores_max / lda.per_executor_cores;
-              lda.lower_bound_reduced_cores = lda.per_executor_cores *2;
-              lda.lower_bound_reduced_mem = lda.per_executor_memory *2;
+              lda.lower_bound_reduced_cores = lda.per_executor_cores *1;
+              lda.lower_bound_reduced_mem = lda.per_executor_memory *1;
 
               m_bt_lps.insert({name, lda});
               LOG(INFO)<<"insert a model named "<<name;
@@ -139,8 +139,8 @@ namespace chameleon {
               terasort.per_executor_cores = 9;
               terasort.per_executor_memory = 6561;
               terasort.overall_executors = terasort.cores_max / terasort.per_executor_cores;
-              terasort.lower_bound_reduced_cores = terasort.per_executor_cores *2;
-              terasort.lower_bound_reduced_mem = terasort.per_executor_memory *2;
+              terasort.lower_bound_reduced_cores = terasort.per_executor_cores *1;
+              terasort.lower_bound_reduced_mem = terasort.per_executor_memory *1;
               m_bt_lps.insert({name, terasort});
               LOG(INFO)<<"insert a model named "<<name;
 
