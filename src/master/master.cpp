@@ -7789,11 +7789,11 @@ void Master::addFramework(Framework* framework)
               }
             }
             LOG(INFO) << " increase the resource of task " << task->name()
-                      << "by 4 cores and 2 G ";
-            origin_cpus += 4;
-            origin_mem += 2 * 1024;
-            this->m_left_cpus -= 4;
-            this->m_left_memory_GB -= 2;
+                      << "by 3 cores and 1 G ";
+            origin_cpus += 3;
+            origin_mem += 1 * 1024;
+            this->m_left_cpus -= 3;
+            this->m_left_memory_GB -= 1;
             LOG(INFO) << "after squeezing resource for the docker "
                          "application,m_left_cpus is "
                       << this->m_left_cpus;
