@@ -120,7 +120,7 @@ namespace chameleon {
           }
             // large input datasets
           if(name.find("LDA")!= std::string::npos){
-            if(m_bt_lps.count("LDA")==0){
+            if(m_bt_lps.count(name)==0){
               BTLinearModel lda("LDA",-3.79712601e-03,-6.59352184e-06,0.05952716033460187);
               lda.cores_max = 156;
               lda.per_executor_cores =  5;
@@ -147,31 +147,46 @@ namespace chameleon {
             }
           }else if(name.find("Gradient")!= std::string::npos){
             if(m_bt_lps.count(name)==0){
-              BTLinearModel gbt("GBT",-6.15300123e-03,1.79400630e-06,0.1331771159919384);
+              BTLinearModel gbt("GBT",-0.08423214,0.00019774,-0.11438166924927734);
               gbt.cores_max = 161;
               gbt.per_executor_cores = 4;
               gbt.per_executor_memory = 1563;
               gbt.overall_executors = gbt.cores_max / gbt.per_executor_cores;
-              gbt.lower_bound_reduced_cores = gbt.per_executor_cores *2;
-              gbt.lower_bound_reduced_mem = gbt.per_executor_memory *2;
+              gbt.lower_bound_reduced_cores = gbt.per_executor_cores *1;
+              gbt.lower_bound_reduced_mem = gbt.per_executor_memory *1;
               m_bt_lps.insert({name, gbt});
               LOG(INFO)<<"insert a model named "<<name;
 
             }
           }else if(name.find("ALS")!= std::string::npos){
             if(m_bt_lps.count(name)==0){
-              BTLinearModel als("ALS",-1.48646513e-02,-8.91943875e-07,0.2490425115114014);
+              BTLinearModel als("ALS", 3.81821507e-02,-6.46756197e-05,0.2715613015300328);
               als.cores_max = 178;
               als.per_executor_cores = 2;
               als.per_executor_memory = 1384;
               als.overall_executors = als.cores_max / als.per_executor_cores;
-              als.lower_bound_reduced_cores = als.per_executor_cores *2;
-              als.lower_bound_reduced_mem = als.per_executor_memory *2;
+              als.lower_bound_reduced_cores = als.per_executor_cores *1;
+              als.lower_bound_reduced_mem = als.per_executor_memory *1;
+              m_bt_lps.insert({name, als});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("SVD")!= std::string::npos){
+            //           // SVD
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel als("SVD", -1.23448008e-01,2.69642447e-05,0.08060215473953322);
+              als.cores_max = 119;
+              als.per_executor_cores = 2;
+              als.per_executor_memory = 7826;
+              als.overall_executors = als.cores_max / als.per_executor_cores;
+              als.lower_bound_reduced_cores = als.per_executor_cores *1;
+              als.lower_bound_reduced_mem = als.per_executor_memory *1;
               m_bt_lps.insert({name, als});
               LOG(INFO)<<"insert a model named "<<name;
 
             }
           }
+
 
            // huge input datasets
 //            if(name.find("LDA")!= std::string::npos){

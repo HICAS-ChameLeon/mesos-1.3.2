@@ -7697,16 +7697,16 @@ void Master::addFramework(Framework* framework)
       http.closed().onAny(defer(self(), &Self::exited, framework->id(), http));
     }
   }
-
   // There should be no offered resources yet!
   CHECK_EQ(Resources(), framework->totalOfferedResources);
   // lele ILP
   string temp_framework_name = framework->info.name();
+  LOG(INFO)<<"framework-name is : "<<temp_framework_name;
   // this->m_lc_cpus ==0 marks that we do not trigger PRSSER.
   if (
     this->m_lc_cpus!=0 && (
     temp_framework_name.find("LDA") != std::string::npos ||
-    temp_framework_name.find("TeraSort") != std::string::npos)) {
+    temp_framework_name.find("TeraSort") != std::string::npos || temp_framework_name.find("Gradient") != std::string::npos || temp_framework_name.find("ALS") != std::string::npos ||temp_framework_name.find("SVD") != std::string::npos)) {
     framework->state = Framework::State::INACTIVE;
     chameleon::MILP::insert_new_lp_model(framework->info.name());
     m_registered_framework_names.push_back(framework->info.name());
