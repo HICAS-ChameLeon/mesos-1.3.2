@@ -294,8 +294,8 @@ namespace chameleon {
                 mip.colLowerBound(a2, model1.lower_bound_reduced_mem);
                 mip.colLowerBound(a4, model2.lower_bound_reduced_mem);
 //
-                mip.colUpperBound(a1,model1.lower_bound_reduced_cores*4);
-                mip.colUpperBound(a3, model2.lower_bound_reduced_cores*4);
+                mip.colUpperBound(a1,20);
+                mip.colUpperBound(a3, 20);
 
 
               // Set the type of the columns
