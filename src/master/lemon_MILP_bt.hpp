@@ -290,10 +290,15 @@ namespace chameleon {
                 // Set lower and upper bounds for the columns (variables)
                 mip.colLowerBound(a1, model1.lower_bound_reduced_cores);
                 mip.colLowerBound(a3, model2.lower_bound_reduced_cores);
+
                 mip.colLowerBound(a2, model1.lower_bound_reduced_mem);
                 mip.colLowerBound(a4, model2.lower_bound_reduced_mem);
+//
+                mip.colUpperBound(a1,model1.lower_bound_reduced_cores*4);
+                mip.colUpperBound(a3, model2.lower_bound_reduced_cores*4);
 
-                // Set the type of the columns
+
+              // Set the type of the columns
                 mip.colType(a1, Mip::INTEGER);
                 mip.colType(a2, Mip::INTEGER);
                 mip.colType(a3, Mip::INTEGER);
