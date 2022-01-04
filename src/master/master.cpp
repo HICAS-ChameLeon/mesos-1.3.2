@@ -337,7 +337,7 @@ Master::Master(
   info_.mutable_address()->set_hostname(hostname);
 
   this->m_lc_cpus = 30;
-  this->m_lc_memory = 40;
+  this->m_lc_memory = 20;
   this->m_left_cpus = 0;
   this->m_left_memory_GB = 0;
   this->m_marathon_fm = nullptr;
@@ -7705,10 +7705,10 @@ void Master::addFramework(Framework* framework)
   // this->m_lc_cpus ==0 marks that we do not trigger PRSSER.
   using namespace chameleon;
   MILP::m_ILP_solution=false;
-  if (
+  if (  // WordCount // ScalaSort  // NaiveBayes  // SVM // DenseKMeans
     this->m_lc_cpus!=0 && (
     temp_framework_name.find("LDA") != std::string::npos ||
-    temp_framework_name.find("TeraSort") != std::string::npos || temp_framework_name.find("Gradient") != std::string::npos || temp_framework_name.find("ALS") != std::string::npos ||temp_framework_name.find("SVD") != std::string::npos)) {
+    temp_framework_name.find("TeraSort") != std::string::npos || temp_framework_name.find("Gradient") != std::string::npos || temp_framework_name.find("ALS") != std::string::npos ||temp_framework_name.find("SVD") != std::string::npos || temp_framework_name.find("DenseKMeans") != std::string::npos || temp_framework_name.find("WordCount") != std::string::npos || temp_framework_name.find("ScalaSort") != std::string::npos  || temp_framework_name.find("NaiveBayes") != std::string::npos || temp_framework_name.find("SVM") != std::string::npos)) {
 
     framework->state = Framework::State::INACTIVE;
     chameleon::MILP::insert_new_lp_model(framework->info.name());

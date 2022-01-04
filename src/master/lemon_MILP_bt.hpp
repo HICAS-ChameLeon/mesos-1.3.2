@@ -185,6 +185,62 @@ namespace chameleon {
               LOG(INFO)<<"insert a model named "<<name;
 
             }
+          }else if(name.find("DenseKMeans")!= std::string::npos){
+            //           // K-means
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel kmeans("DenseKMeans", 1.66599047e-02,-1.32982637e-05,0.09324776331922635);
+              kmeans.cores_max = 163;
+              kmeans.per_executor_cores = 2;
+              kmeans.per_executor_memory = 3077;
+              kmeans.overall_executors = kmeans.cores_max / kmeans.per_executor_cores;
+              kmeans.lower_bound_reduced_cores = kmeans.per_executor_cores *1;
+              kmeans.lower_bound_reduced_mem = kmeans.per_executor_memory *1;
+              m_bt_lps.insert({name, kmeans});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("WordCount")!= std::string::npos){
+            //           // wordcount
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel word("WordCount", -1.49027704e-02,-1.32982637e-05,4.30475388e-05);
+              word.cores_max = 172;
+              word.per_executor_cores = 9;
+              word.per_executor_memory = 2622;
+              word.overall_executors = word.cores_max / word.per_executor_cores;
+              word.lower_bound_reduced_cores = word.per_executor_cores *1;
+              word.lower_bound_reduced_mem = word.per_executor_memory *1;
+              m_bt_lps.insert({name, word});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("ScalaSort")!= std::string::npos){
+            //           // Sort
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel sort("ScalaSort", -0.55890257,0.00097112,-0.19602875588436175);
+              sort.cores_max = 61;
+              sort.per_executor_cores = 6;
+              sort.per_executor_memory = 3456;
+              sort.overall_executors = sort.cores_max / sort.per_executor_cores;
+              sort.lower_bound_reduced_cores = sort.per_executor_cores *1;
+              sort.lower_bound_reduced_mem = sort.per_executor_memory *1;
+              m_bt_lps.insert({name, sort});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
+          }else if(name.find("NaiveBayes")!= std::string::npos){
+            //           // NaiveBayes
+            if(m_bt_lps.count(name)==0){
+              BTLinearModel bayes("NaiveBayes", -0.06814784,0.00024497,-0.038757380707594546);
+              bayes.cores_max = 172;
+              bayes.per_executor_cores = 9;
+              bayes.per_executor_memory = 2622;
+              bayes.overall_executors = bayes.cores_max / bayes.per_executor_cores;
+              bayes.lower_bound_reduced_cores = bayes.per_executor_cores *1;
+              bayes.lower_bound_reduced_mem = bayes.per_executor_memory *1;
+              m_bt_lps.insert({name, bayes});
+              LOG(INFO)<<"insert a model named "<<name;
+
+            }
           }
 
 
