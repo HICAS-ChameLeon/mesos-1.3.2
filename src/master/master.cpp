@@ -7208,11 +7208,11 @@ void Master::offer(
                      "the framework.";
       }
       const string temp_name = framework->info.name();
-      LOG(INFO) << " clear the registered messages";
-      std::remove(
-        m_registered_framework_names.begin(),
-        m_registered_framework_names.end(),
-        temp_name);
+//      LOG(INFO) << " clear the registered messages";
+//      std::remove(
+//        m_registered_framework_names.begin(),
+//        m_registered_framework_names.end(),
+//        temp_name);
 
 
       offer->mutable_allocation_info()->set_role(role);
@@ -7759,6 +7759,7 @@ void Master::addFramework(Framework* framework)
       }
 //      MILP::m_ILP_solution=false;
       m_registered_fw_ids.clear();
+      m_registered_framework_names.clear();
 
       // begins to stead resources from BT jobs to latency-critical applications
       if (m_marathon_fm != nullptr) {

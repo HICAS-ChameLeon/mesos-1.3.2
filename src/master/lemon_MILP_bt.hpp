@@ -174,14 +174,14 @@ namespace chameleon {
           }else if(name.find("SVD")!= std::string::npos){
             //           // SVD
             if(m_bt_lps.count(name)==0){
-              BTLinearModel als("SVD", -1.23448008e-01,2.69642447e-05,0.08060215473953322);
-              als.cores_max = 119;
-              als.per_executor_cores = 2;
-              als.per_executor_memory = 7826;
-              als.overall_executors = als.cores_max / als.per_executor_cores;
-              als.lower_bound_reduced_cores = als.per_executor_cores *1;
-              als.lower_bound_reduced_mem = als.per_executor_memory *1;
-              m_bt_lps.insert({name, als});
+              BTLinearModel svd("SVD", -1.23448008e-01,2.69642447e-05,0.08060215473953322);
+              svd.cores_max = 119;
+              svd.per_executor_cores = 2;
+              svd.per_executor_memory = 7826;
+              svd.overall_executors = svd.cores_max / svd.per_executor_cores;
+              svd.lower_bound_reduced_cores = svd.per_executor_cores *1;
+              svd.lower_bound_reduced_mem = svd.per_executor_memory *1;
+              m_bt_lps.insert({name, svd});
               LOG(INFO)<<"insert a model named "<<name;
 
             }
