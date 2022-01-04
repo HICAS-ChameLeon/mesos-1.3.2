@@ -7707,11 +7707,12 @@ void Master::addFramework(Framework* framework)
     this->m_lc_cpus!=0 && (
     temp_framework_name.find("LDA") != std::string::npos ||
     temp_framework_name.find("TeraSort") != std::string::npos || temp_framework_name.find("Gradient") != std::string::npos || temp_framework_name.find("ALS") != std::string::npos ||temp_framework_name.find("SVD") != std::string::npos)) {
+    using namespace chameleon;
+    MILP::m_ILP_solution=false;
     framework->state = Framework::State::INACTIVE;
     chameleon::MILP::insert_new_lp_model(framework->info.name());
     m_registered_framework_names.push_back(framework->info.name());
     m_registered_fw_ids.insert({framework->info.name(), framework->id()});
-    using namespace chameleon;
     vector<BTLinearModel> btl_models =
       chameleon::mix_integer_linear_programming(
         "repartition",
@@ -7755,7 +7756,7 @@ void Master::addFramework(Framework* framework)
           }
         }
       }
-      MILP::m_ILP_solution=false;
+//      MILP::m_ILP_solution=false;
       m_registered_fw_ids.clear();
 
       // begins to stead resources from BT jobs to latency-critical applications
