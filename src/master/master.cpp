@@ -7755,7 +7755,7 @@ void Master::addFramework(Framework* framework)
           }
         }
       }
-      //      MILP::m_ILP_solution=false;
+      MILP::m_ILP_solution=false;
       m_registered_fw_ids.clear();
 
       // begins to stead resources from BT jobs to latency-critical applications
