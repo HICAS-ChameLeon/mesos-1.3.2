@@ -532,9 +532,9 @@ vector<BTLinearModel> mix_integer_linear_programming_three(
       mip.colLowerBound(a6, model3.lower_bound_reduced_mem);
 
       //
-      mip.colUpperBound(a1, 15);
-      mip.colUpperBound(a3, 15);
-      mip.colUpperBound(a5, 15);
+      mip.colUpperBound(a1, 12);
+      mip.colUpperBound(a3, 12);
+      mip.colUpperBound(a5, 12);
 
 
       // Set the type of the columns
