@@ -7772,7 +7772,7 @@ void Master::addFramework(Framework* framework)
       // begins to stead resources from BT jobs to latency-critical applications
       if (m_marathon_fm != nullptr) {
         foreachvalue (Task* task, m_marathon_fm->tasks) {
-          if (this->m_left_cpus <= 4 && this->m_left_memory_GB <= 2) continue;
+          if (this->m_left_cpus < 3 && this->m_left_memory_GB < 1) continue;
           LOG(INFO) << "lele task id " << task->task_id();
           LOG(INFO) << "lele task name, state " << task->name() << ", "
                     << task->state();
@@ -7804,7 +7804,7 @@ void Master::addFramework(Framework* framework)
             LOG(INFO) << " increase the resource of task " << task->name()
                       << "by 3 cores and 1 G ";
             origin_cpus += 3;
-            origin_mem += 1 * 1024;
+            origin_mem += 1*1024;
             this->m_left_cpus -= 3;
             this->m_left_memory_GB -= 1;
             LOG(INFO) << "after squeezing resource for the docker "
