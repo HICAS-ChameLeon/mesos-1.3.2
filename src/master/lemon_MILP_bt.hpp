@@ -554,7 +554,6 @@ vector<BTLinearModel> mix_integer_linear_programming_two_PARTIES(
         LOG(INFO) << model2.info();
         MILP::m_ILP_solution = true;
 
-
     } else {
       LOG(INFO) << "cannot find the specified model!!! ";
     }
