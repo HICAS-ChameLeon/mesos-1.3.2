@@ -7716,7 +7716,8 @@ void Master::addFramework(Framework* framework)
     m_registered_fw_ids.insert({framework->info.name(), framework->id()});
     LOG(INFO)<<"lele 2 BT workloads";
     vector<BTLinearModel> btl_models =
-      chameleon::mix_integer_linear_programming_two(
+//      chameleon::mix_integer_linear_programming_two(
+        chameleon::mix_integer_linear_programming_two_PARTIES(
         "repartition",
         this->m_lc_cpus,
         this->m_lc_memory * 1024,

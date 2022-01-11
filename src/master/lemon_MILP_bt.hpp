@@ -480,6 +480,88 @@ vector<BTLinearModel> mix_integer_linear_programming_two(
   return result;
 }
 
+vector<BTLinearModel> mix_integer_linear_programming_two_PARTIES(
+  const string& lc_name,
+  const int cpus,
+  const int mem,
+  const vector<string>& bt_names)
+{
+  LOG(INFO) << "mix_integer_linear_programming";
+
+  vector<BTLinearModel> result;
+  using namespace lemon;
+  // two BT workloads
+  if (bt_names.size() == 2) {
+    if (
+      MILP::m_bt_lps.count(bt_names[0]) && MILP::m_bt_lps.count(bt_names[1])) {
+      int a1,a2,a3,a4;
+      a1 = a3 = ceil(cpus/2);
+      a2 = a4 = ceil(mem/2);
+      BTLinearModel& model1 = MILP::m_bt_lps.at(bt_names[0]);
+      BTLinearModel& model2 = MILP::m_bt_lps.at(bt_names[1]);
+      LOG(INFO) << model1.m_name << " " << model2.m_name;
+
+      double aggregate_performance_loss =  model1.m_coe_cpu * a1 + model1.m_coe_mem * a2 + model1.m_c +
+                                           model2.m_coe_cpu * a3 + model2.m_coe_mem * a4 + model2.m_c;
+      // Print the results
+        LOG(INFO) << "Objective function value: " <<aggregate_performance_loss;
+        LOG(INFO) << "model1 name is " << model1.m_name;
+        LOG(INFO) << "model2 name is " << model2.m_name;
+        LOG(INFO) << "a1 = " << a1;
+
+        model1.reduced_cores = a1;
+        model1.reduced_executors =
+          int(ceil(model1.reduced_cores / model1.per_executor_cores));
+        LOG(INFO) << "model1.reduced_executors is " << model1.reduced_executors;
+        LOG(INFO) << "a2 = " << a2;
+        model1.reduced_mem = a2;
+        LOG(INFO) << "model1 reduced_mem is " << model1.reduced_mem
+                  << " per_executor_memory is " << model1.per_executor_memory
+                  << " overall execuctors is " << model1.overall_executors;
+
+        model1.reduced_per_mem =
+          (model1.reduced_mem -
+           model1.per_executor_memory * model1.reduced_executors) /
+          (model1.overall_executors - model1.reduced_executors);
+        LOG(INFO) << " model1.reduced_per_mem is " << model1.reduced_per_mem;
+
+        LOG(INFO) << "a3 = " << a3;
+        model2.reduced_cores = a3;
+        model2.reduced_executors =
+          model2.reduced_cores / model2.per_executor_cores;
+        LOG(INFO) << "model2.reduced_executors is " << model2.reduced_executors;
+        LOG(INFO) << "a4 = " << a4;
+        model2.reduced_mem = a4;
+        LOG(INFO) << "model2 reduced_mem is " << model2.reduced_mem
+                  << " per_executor_memory is " << model2.per_executor_memory
+                  << " overall execuctors is " << model2.overall_executors;
+        model2.reduced_per_mem =
+          (model2.reduced_mem -
+           model2.per_executor_memory * model2.reduced_executors) /
+          (model2.overall_executors - model2.reduced_executors);
+        LOG(INFO) << " model2.reduced_per_mem is " << model2.reduced_per_mem;
+        LOG(INFO) << "The estimated performance losses of two models are ";
+        LOG(INFO) << "model1 is "
+                  << (model1.m_coe_cpu * a1 +
+                      model1.m_coe_mem * a2 + model1.m_c);
+        LOG(INFO) << "model2 is "
+                  << (model2.m_coe_cpu * a3 +
+                      model2.m_coe_mem * a4 + model2.m_c);
+        result.push_back(model1);
+        result.push_back(model2);
+
+        LOG(INFO) << model1.info();
+        LOG(INFO) << model2.info();
+        MILP::m_ILP_solution = true;
+
+
+    } else {
+      LOG(INFO) << "cannot find the specified model!!! ";
+    }
+  }
+  return result;
+}
+
 /**
  *
  * @param lc_name latency-critical framework name, like "repartition"
