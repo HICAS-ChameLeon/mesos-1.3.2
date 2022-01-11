@@ -415,12 +415,11 @@ vector<BTLinearModel> mix_integer_linear_programming_two(
       mip.obj(
         model1.m_coe_cpu * a1 + model1.m_coe_mem * a2 + model1.m_c +
         model2.m_coe_cpu * a3 + model2.m_coe_mem * a4 + model2.m_c);
-
       // Solve the problem using the underlying MIP solver
       mip.solve();
       // Print the results
       if (mip.type() == Mip::OPTIMAL) {
-        LOG(INFO) << "Objective function value: " << mip.solValue();
+        LOG(INFO) << "leleObjective function value: " << mip.solValue();
         LOG(INFO) << "model1 name is " << model1.m_name;
         LOG(INFO) << "model2 name is " << model2.m_name;
         LOG(INFO) << "a1 = " << mip.sol(a1);
