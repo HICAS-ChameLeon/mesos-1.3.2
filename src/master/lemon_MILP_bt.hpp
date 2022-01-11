@@ -427,7 +427,7 @@ vector<BTLinearModel> mix_integer_linear_programming_two(
 
         model1.reduced_cores = mip.sol(a1);
         model1.reduced_executors =
-          model1.reduced_cores / model1.per_executor_cores;
+          int(ceil(model1.reduced_cores / model1.per_executor_cores));
         LOG(INFO) << "model1.reduced_executors is " << model1.reduced_executors;
         LOG(INFO) << "a2 = " << mip.sol(a2);
         model1.reduced_mem = mip.sol(a2);
@@ -500,7 +500,7 @@ vector<BTLinearModel> mix_integer_linear_programming_three(
 
   vector<BTLinearModel> result;
   using namespace lemon;
-  // two BT workloads
+  // three BT workloads
   if (bt_names.size() == 3) {
     if (
       MILP::m_bt_lps.count(bt_names[0]) && MILP::m_bt_lps.count(bt_names[1])) {
