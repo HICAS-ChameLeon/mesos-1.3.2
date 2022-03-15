@@ -262,7 +262,7 @@ public:
       //           // NaiveBayes
       if (m_bt_lps.count(name) == 0) {
         BTLinearModel bayes(
-          "NaiveBayes", -0.06740706, 0.00011015, 0.1282460042419834);
+          "SVM", -0.06740706, 0.00011015, 0.1282460042419834);
         bayes.cores_max = 131;
         bayes.per_executor_cores = 4;
         bayes.per_executor_memory = 4578;
